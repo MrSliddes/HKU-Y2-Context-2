@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.sliddes.screenshot": {
+      "version": "https://github.com/MrSliddes/SLIDDES-Unity-ScreenShot.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "32561261ec94698c5f04f4e4e1d36aa5d1f8f014"
+    },
     "com.unity.collab-proxy": {
       "version": "1.3.9",
       "depth": 0,
