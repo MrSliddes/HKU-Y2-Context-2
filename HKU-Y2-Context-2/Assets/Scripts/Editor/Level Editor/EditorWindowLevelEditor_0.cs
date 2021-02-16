@@ -7,6 +7,19 @@ namespace SLIDDES.Editor.Window
 {
     public class EditorWindowLevelEditor_0 : EditorWindow
     {
+        // TODO
+        // toggle to disable editor, but still keep windows
+        // toolbar 0 searchbar
+        // toolbar 0 tags
+        // https://answers.unity.com/questions/1098979/custom-editor-show-asset-folders-in-objectfield.html
+
+        // Editor Window Level Editor 0
+
+        /// <summary>
+        /// Is level editor in use?
+        /// </summary>
+        public static bool inUse;
+
         // Editor Window Toolbar 0
         public static EditorWindow windowToolbar_0;
         public static string toolbar_0_fileDirectory;
@@ -14,8 +27,6 @@ namespace SLIDDES.Editor.Window
         /// The default file directory
         /// </summary>
         private readonly static string toolbar_0_fileDirectoryDefault = "Assets/Prefabs/Level Editor";
-
-
 
         // EditorGUILayout
         private readonly int editorSpacePixels = 10;
@@ -38,11 +49,27 @@ namespace SLIDDES.Editor.Window
 
             // Load values
             //toolbar_0_fileDirectoryDefault = Application.dataPath + toolbar_0_fileDirectoryDefault; // Is here cause cannot set Application.dataPath at var declaration
-        }        
+        }
+
+        private void Awake()
+        {
+            inUse = true;
+        }
+
+        private void OnDestroy()
+        {
+            inUse = false;
+            // When the window is destroyed, remove the delegate
+            // so that it will no longer do any drawing.
+            SceneView.duringSceneGui -= this.OnSceneGUI;
+
+            windowToolbar_0.Close(); // Close toolbar window too
+        }
 
         public void OnGUI()
         {
             // Values
+            
 
             // Window code goes here
             EditorGUILayout.BeginVertical(); // Make it look like unity inspector
@@ -94,13 +121,6 @@ namespace SLIDDES.Editor.Window
             Debug.Log("Selected LVL Editor");
         }
 
-        void OnDestroy()
-        {
-            // When the window is destroyed, remove the delegate
-            // so that it will no longer do any drawing.
-            SceneView.duringSceneGui -= this.OnSceneGUI;
-        }
-
         void OnSceneGUI(SceneView sceneView)
         {
             // Do your drawing here using Handles.
@@ -108,65 +128,6 @@ namespace SLIDDES.Editor.Window
             // Do your drawing here using GUI.
             GUILayout.Label("Level Editor Side Scroller 0 in use.", GUI.skin.box);
             Handles.EndGUI();
-        }
-    }
-
-    /// <summary>
-    /// Included in here for now to keep it 1 file
-    /// </summary>
-    public class EditorWindowLevelEditor_0_Toolbar_0 : EditorWindow
-    {
-        // Editor
-        private readonly int editorSpacePixels = 10;
-        /// <summary>
-        /// Used for editor scrollbar
-        /// </summary>
-        private Vector2 editorScrollPosition;
-
-        public void OnGUI()
-        {
-            // Window code goes here
-            EditorGUILayout.BeginVertical(); // Make it look like unity inspector
-            editorScrollPosition = EditorGUILayout.BeginScrollView(editorScrollPosition);
-            GUILayout.Space(editorSpacePixels);
-
-            // Get asset GUIDs from folder with type GameObject
-            string[] folderContent = AssetDatabase.FindAssets("t:GameObject", new[] { EditorWindowLevelEditor_0.toolbar_0_fileDirectory });
-
-            // Display loaded assets amount
-            EditorGUILayout.LabelField("Loaded: " + folderContent.Length + " Assets");
-
-            // Display assets
-            EditorGUILayout.BeginHorizontal();
-
-            Debug.Log(folderContent.Length);
-            GameObject[] prefabs = new GameObject[folderContent.Length];
-            // Get prefabs
-            for(int i = 0; i < folderContent.Length; i++)
-            {
-                prefabs[i] = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(folderContent[i]), typeof(GameObject)) as GameObject;
-                CreateItemButton(prefabs[i]);
-                
-            }
-
-            EditorGUILayout.EndHorizontal();
-
-            // Close off
-            EditorGUILayout.EndScrollView();
-            EditorGUILayout.EndVertical();
-        }
-
-        private void CreateItemButton(GameObject item)
-        {
-            EditorGUILayout.BeginVertical();
-            if(GUILayout.Button(AssetPreview.GetAssetPreview(item), GUILayout.Width(64), GUILayout.Height(64)))
-            {
-                // Select button
-
-                Repaint();
-            }
-            GUILayout.Label(item.name, EditorStyles.miniLabel);
-            EditorGUILayout.EndVertical();
         }
     }
 }
