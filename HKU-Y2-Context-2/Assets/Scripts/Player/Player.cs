@@ -46,9 +46,6 @@ public class Player : MonoBehaviour
         PlayerInput();
         UpdatePlayerState();
 
-        // Movement
-        rb.velocity = new Vector3(input.x * movementSpeed, rb.velocity.y, rb.velocity.z);
-
         ShootWeapon();
     }
 
@@ -63,6 +60,12 @@ public class Player : MonoBehaviour
         //rb.MovePosition(direction);
 
         //rb.velocity = new Vector3(input.x * movementSpeed, rb.velocity.y, rb.velocity.z);
+        
+        // Movement
+        Vector3 movement = new Vector3(input.x, 0, 0);
+        rb.AddForce(movement * movementSpeed * 100 * Time.fixedDeltaTime, ForceMode.Force);
+
+        
     }
 
     public void EnterNewPlayerState(PlayerState newState)
@@ -137,7 +140,7 @@ public class Player : MonoBehaviour
                 if(!hasEnterdNewPlayerState)
                 {
                     hasEnterdNewPlayerState = true;
-                    rb.velocity += Vector3.up * jumpForce;
+                    rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                     cameOffGround = false;
                 }
 
@@ -201,7 +204,7 @@ public class Player : MonoBehaviour
     private void ShootWeapon()
     {
         // Lazer
-        if(Input.GetKeyDown(KeyCode.Return))
+        if(Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
             if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.right), out hit, Mathf.Infinity))

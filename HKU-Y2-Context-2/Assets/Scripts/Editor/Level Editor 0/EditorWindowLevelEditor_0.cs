@@ -63,7 +63,7 @@ namespace SLIDDES.Editor.Window
             // so that it will no longer do any drawing.
             SceneView.duringSceneGui -= this.OnSceneGUI;
 
-            windowToolbar_0?.Close(); // Close toolbar window too
+            GetWindow<EditorWindowLevelEditor_0_Toolbar_0>()?.Close(); // Close toolbar window too
         }
 
         public void OnGUI()

@@ -5,7 +5,13 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "4373bd6e58da295686488c6c830a77d4c6d8efb6"
+      "hash": "673dabdf9a75324670e8a78883dce4f658210840"
+    },
+    "com.unity.2d.tilemap": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {}
     },
     "com.unity.collab-proxy": {
       "version": "1.3.9",

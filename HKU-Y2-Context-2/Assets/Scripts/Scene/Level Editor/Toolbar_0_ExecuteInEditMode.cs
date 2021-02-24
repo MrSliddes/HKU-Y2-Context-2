@@ -24,9 +24,11 @@ namespace SLIDDES.Editor.Window
         /// <summary>
         /// Current mouse position of sceneView in world position
         /// </summary>
-        private Vector3 mousePositionScene;
-
-        private bool isMouseLeftHold = false;
+        public Vector3 mousePositionScene;
+        /// <summary>
+        /// Current mouse GUIPoint position
+        /// </summary>
+        public Vector3 mousePositionGUIPoint;
 
         private void Awake()
         {
@@ -73,7 +75,8 @@ namespace SLIDDES.Editor.Window
 
             // Check if mousePosition is in sceneView
             if(mousePosition.x >= 0 && mousePosition.x <= scene.camera.pixelWidth && mousePosition.y >= 0 && mousePosition.y <= scene.camera.pixelHeight) { } else return;
-            Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+            mousePositionGUIPoint = mousePosition;
+            Ray ray = HandleUtility.GUIPointToWorldRay(mousePositionGUIPoint);
 
             mousePositionScene = ray.origin;
             mousePositionScene = SnapToGrid(mousePositionScene) - new Vector3(0.5f, 0.5f, 0);
@@ -95,12 +98,7 @@ namespace SLIDDES.Editor.Window
         /// <returns></returns>
         private bool PositionIsOccupied(SceneView scene)
         {
-            // Check if there isnt already an object placed
-            Vector3 mousePosition = Event.current.mousePosition;
-
-            // Check if mousePosition is in sceneView
-            if(mousePosition.x >= 0 && mousePosition.x <= scene.camera.pixelWidth && mousePosition.y >= 0 && mousePosition.y <= scene.camera.pixelHeight) { } else return true;
-            Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
+            Ray ray = HandleUtility.GUIPointToWorldRay(mousePositionGUIPoint);
 
             RaycastHit hit;
             if(Physics.Raycast(ray, out hit))
@@ -115,20 +113,12 @@ namespace SLIDDES.Editor.Window
         }
 
 
-        private void OnDrawGizmos()
-        {
-            // Get mouse position
-            //GetMousePositionScene();
-            
-            // Draw cube
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(mousePositionScene, Vector3.one);
-        }
+        
 
         void OnEnable()
         {
             SceneView.duringSceneGui += this.OnScene;
-            Tools.hidden = true;
+            //Tools.hidden = true;
             // Assign parent
             CreateParentItems();
         }
@@ -136,11 +126,12 @@ namespace SLIDDES.Editor.Window
         private void OnDestroy()
         {
             SceneView.duringSceneGui -= this.OnScene;
-            Tools.hidden = false;
+            //Tools.hidden = false;
         }
 
         void OnScene(SceneView scene)
         {
+            //Cursor.SetCursor(Resources.Load<Texture2D>("d_eyeDropper.Large"), Vector2.zero, CursorMode.Auto); causes flikkering
             Event e = Event.current;
             
             if(e.type != EventType.MouseLeaveWindow) // Prevent Screen position out of view frustum Error
@@ -149,7 +140,12 @@ namespace SLIDDES.Editor.Window
             }
             // move custom gameobject here to show mousepos as alternative of Gizmos
 
-
+            
+            if(Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                Debug.Log("undo");
+                Undo.PerformUndo();
+            }
 
             // Disable drag with right mouse button
             if(e.isMouse && e.type == EventType.MouseDrag && e.button == 1)
@@ -166,19 +162,19 @@ namespace SLIDDES.Editor.Window
             {
                 if(eventType == EventType.MouseUp)
                 {
-                    Debug.Log("Mouse Up!");
+                    //Debug.Log("Mouse Up!");
                     GUIUtility.hotControl = controlID;
                     e.Use();
                 }
                 else if(eventType == EventType.MouseDrag)
                 {
-                    Debug.Log("Mouse Drag!");
+                    //Debug.Log("Mouse Drag!");
                     e.Use();
                     PlaceItem(scene);
                 }
                 else if(eventType == EventType.MouseDown)
                 {
-                    Debug.Log("Mouse Down!");
+                    //Debug.Log("Mouse Down!");
                     GUIUtility.hotControl = 0;
                     e.Use();
                     PlaceItem(scene);
@@ -189,19 +185,19 @@ namespace SLIDDES.Editor.Window
             {
                 if(eventType == EventType.MouseUp)
                 {
-                    Debug.Log("R Mouse Up!");
+                    //Debug.Log("R Mouse Up!");
                     GUIUtility.hotControl = controlID;
                     e.Use();
                 }
                 else if(eventType == EventType.MouseDrag)
                 {
-                    Debug.Log("R Mouse Drag!");
+                    //Debug.Log("R Mouse Drag!");
                     e.Use();
                     RemoveItem(e, scene);
                 }
                 else if(eventType == EventType.MouseDown)
                 {
-                    Debug.Log("R Mouse Down!");
+                    //Debug.Log("R Mouse Down!");
                     GUIUtility.hotControl = 0;
                     e.Use();
                     RemoveItem(e, scene);
@@ -215,6 +211,7 @@ namespace SLIDDES.Editor.Window
 
         private void PlaceItem(SceneView scene)
         {
+            
             if(PositionIsOccupied(scene)) return;
 
             // Place item                
@@ -223,6 +220,7 @@ namespace SLIDDES.Editor.Window
                 GameObject a = Instantiate(objectToCreate, mousePositionScene, Quaternion.identity);
                 if(parentOfItems == null) CreateParentItems();
                 a.transform.SetParent(parentOfItems);
+                Undo.RegisterCreatedObjectUndo(a, "Created " + a.name); // Add to undo stack
             }
             else
             {
@@ -247,6 +245,8 @@ namespace SLIDDES.Editor.Window
         }
 
         #endregion
+
+        
     }
 
     /// <summary>
@@ -277,4 +277,7 @@ namespace SLIDDES.Editor.Window
 // Hide tools https://forum.unity.com/threads/hiding-default-transform-handles.86760/
 // Disable right mouse drag https://gamedev.stackexchange.com/questions/179984/disable-default-unity-editor-behaviour-on-input
 // Mouse down / drag / up https://forum.unity.com/threads/hurr-eventtype-mouseup-not-working-on-left-clicks.99909/
+
+// Changing mouse icon https://docs.unity3d.com/ScriptReference/EditorGUIUtility.IconContent.html
+// unity editor build in icons https://unitylist.com/p/5c3/Unity-editor-icons
 #endif
