@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace SLIDDES.Editor.Window
+namespace SLIDDES.LevelEditor.SideScroller3D
 {
-
     [ExecuteInEditMode]
     public class Toolbar_0_ExecuteInEditMode : MonoBehaviour
     {
