@@ -44,7 +44,7 @@ namespace SLIDDES.Editor.Window
         {
             //Show existing window instance. If one doesn't exist, make one.
             EditorWindow window = EditorWindow.GetWindow(typeof(EditorWindowLevelEditor_0), false, "Lvl Editor 0"); // Name
-            window.minSize = new Vector2(500, 140);
+            window.minSize = new Vector2(100, 140);
             windowToolbar_0 = EditorWindow.GetWindow(typeof(EditorWindowLevelEditor_0_Toolbar_0), false, "Lvl Editor Toolbar 0");
 
             // Load values

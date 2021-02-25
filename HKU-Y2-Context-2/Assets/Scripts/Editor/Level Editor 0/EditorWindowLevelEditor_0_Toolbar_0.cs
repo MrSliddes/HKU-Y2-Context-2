@@ -29,7 +29,7 @@ namespace SLIDDES.Editor.Window
         /// <summary>
         /// Contains the searchbar result
         /// </summary>
-        private string searchbarResult;
+        private string searchbarResult = "";
         /// <summary>
         /// The size of the asset picture
         /// </summary>
@@ -163,7 +163,10 @@ namespace SLIDDES.Editor.Window
         private void CreateItemButton(GameObject item)
         {
             // Hide button if searchbarResult is not the same
-            if(!item.name.ToLower().Contains(searchbarResult.ToLower())) return;
+            if(searchbarResult != "")
+            {
+                if(!item.name.ToLower().Contains(searchbarResult.ToLower())) return;
+            }
 
             EditorGUILayout.BeginVertical();
             Color c = GUI.color;
