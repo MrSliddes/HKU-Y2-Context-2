@@ -131,8 +131,8 @@ namespace SLIDDES.Editor.Window
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
                 GameObject[] prefabs = new GameObject[folderContent.Length];
-                Debug.Log(Screen.width);
-                Debug.Log(Mathf.FloorToInt(Screen.width / editorAssetDisplaySize.x));
+                //Debug.Log(Screen.width);
+                //Debug.Log(Mathf.FloorToInt(Screen.width / editorAssetDisplaySize.x));
                 int maxRowAmount = Mathf.FloorToInt(Screen.width / editorAssetDisplaySize.x) - 2;
                 int closer = maxRowAmount;
                 // Get prefabs
@@ -163,7 +163,7 @@ namespace SLIDDES.Editor.Window
         private void CreateItemButton(GameObject item)
         {
             // Hide button if searchbarResult is not the same
-            if(searchbarResult != "" && !item.name.ToLower().Contains(searchbarResult.ToLower())) return;
+            if(!item.name.ToLower().Contains(searchbarResult.ToLower())) return;
 
             EditorGUILayout.BeginVertical();
             Color c = GUI.color;
