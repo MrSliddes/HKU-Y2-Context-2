@@ -6,9 +6,9 @@ using UnityEditor;
 namespace SLIDDES.LevelEditor.SideScroller3D
 {
     /// <summary>
-    /// Included in here for now to keep it 1 file
+    /// Side Scroller 3D
     /// </summary>
-    public class Toolbar_0 : EditorWindow
+    public class SS3D : EditorWindow
     {
         /// <summary>
         /// Is this toolbar currently inUse?
@@ -52,11 +52,11 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         private string toolbar_0_fileDirectory;
 
 
-        [MenuItem("Window/SLIDDES/Level Editor/Side Scroller 3D/Toolbar 0", false, 1)]
+        [MenuItem("Window/SLIDDES/Level Editor/Side Scroller 3D", false, 1)]
         public static void ShowWindow()
         {
             //Show existing window instance. If one doesn't exist, make one.
-            EditorWindow window = GetWindow(typeof(Toolbar_0), false, "Toolbar 0", true); // Name
+            EditorWindow window = GetWindow(typeof(SS3D), false, "SS3D", true); // Name
             window.minSize = new Vector2(500, 140);
         }
 
@@ -89,6 +89,9 @@ namespace SLIDDES.LevelEditor.SideScroller3D
             SceneView.duringSceneGui -= this.OnSceneGUI;
             // Add (or re-add) the delegate.
             SceneView.duringSceneGui += this.OnSceneGUI;
+
+            // Based on SS3DEIEM currentToolIndex update this one
+            //NewToolIndex(SS3DEIEM.currentToolIndex);
         }
 
         #endregion
@@ -101,7 +104,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
             EditorGUILayout.Space();
 
             // Object that runs in editor mode (allows user to create objects while in edit mode)
-            if(Toolbar_0_ExecuteInEditMode.Instance == null)
+            if(SS3DEIEM.Instance == null)
             {
                 // Remove old ref if it exists
                 if(toolbar_0_ExecuteInEditModeGameObject != null) DestroyImmediate(toolbar_0_ExecuteInEditModeGameObject);
@@ -109,9 +112,9 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                 // Create new reference object
                 toolbar_0_ExecuteInEditModeGameObject = new GameObject();
                 toolbar_0_ExecuteInEditModeGameObject.transform.position = Vector3.zero;
-                toolbar_0_ExecuteInEditModeGameObject.name = "[Level Editor 0] (Dont remove!)";
-                toolbar_0_ExecuteInEditModeGameObject.AddComponent<Toolbar_0_ExecuteInEditMode>();
-                Toolbar_0_ExecuteInEditMode.Instance = toolbar_0_ExecuteInEditModeGameObject.GetComponent<Toolbar_0_ExecuteInEditMode>();
+                toolbar_0_ExecuteInEditModeGameObject.name = "[SS3D] Temporary GameObject";
+                toolbar_0_ExecuteInEditModeGameObject.AddComponent<SS3DEIEM>();
+                SS3DEIEM.Instance = toolbar_0_ExecuteInEditModeGameObject.GetComponent<SS3DEIEM>();
             }
 
             #region Events
@@ -125,11 +128,11 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                 }
                 else if(e.keyCode == KeyCode.B)
                 {
-                    SwitchToolIndex(0);
+                    NewToolIndex(0);
                 }
                 else if(e.keyCode == KeyCode.D)
                 {
-                    SwitchToolIndex(1);
+                    NewToolIndex(1);
                 }
             }
             #endregion
@@ -148,22 +151,22 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                 if(GUILayout.Button(new GUIContent("In Use", "Toggle Editor On/Off"), GUILayout.Width(100)))
                 {
                     inUse = !inUse;
-                    Toolbar_0_ExecuteInEditMode.inUse = inUse;
+                    SS3DEIEM.inUse = inUse;
                 }
                 GUI.color = c;
                 EditorGUILayout.Space(10);
 
                 // Tools select
-                GUIContent[] g = new GUIContent[] { new GUIContent("", Resources.Load<Texture2D>("d_Grid.PaintTool"), "Paint With Mouse (B)\nOnly Applies To Current Z Layer!"),
-                                                    new GUIContent("", Resources.Load<Texture2D>("d_Grid.EraserTool"), "Erase With Mouse (D)\nOnly Applies To Current Z Layer!" )};
-                SwitchToolIndex(GUILayout.Toolbar(currentToolIndex, g, GUILayout.MaxWidth(100)));
+                GUIContent[] g = new GUIContent[] { new GUIContent("", Resources.Load<Texture2D>("d_Grid.PaintTool"), "Paint With Left Mouse Button (B)\nOnly Applies To Current Z Layer!"),
+                                                    new GUIContent("", Resources.Load<Texture2D>("d_Grid.EraserTool"), "Erase With Left Mouse Button (D)\nOnly Applies To Current Z Layer!" )};
+                NewToolIndex(GUILayout.Toolbar(currentToolIndex, g, GUILayout.MaxWidth(100)));
                 EditorGUILayout.Space();
 
                 // Z index
                 EditorGUIUtility.labelWidth = 10;
                 int prevLayerIndex = zLayerIndex; // Prevent updating zLayerVisablity every frame
                 zLayerIndex = EditorGUILayout.IntField("Z", zLayerIndex);
-                Toolbar_0_ExecuteInEditMode.Instance.zIndex = zLayerIndex;
+                SS3DEIEM.Instance.zIndex = zLayerIndex;
                 if(zLayerIndex != prevLayerIndex) UpdateZLayerVisability();
                 // Z index layer visablility
                 Texture2D tEye; if(showAllZLayers) tEye = Resources.Load<Texture2D>("d_scenevis_visible_hover"); else tEye = Resources.Load<Texture2D>("d_scenevis_hidden_hover");
@@ -337,7 +340,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                         {
                             objectToCreate = item;
                         }
-                        Toolbar_0_ExecuteInEditMode.objectToCreate = objectToCreate;
+                        SS3DEIEM.objectToCreate = objectToCreate;
                         Repaint();
                     }
                     EditorStyles.label.wordWrap = true;
@@ -364,7 +367,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                         {
                             objectToCreate = item;
                         }
-                        Toolbar_0_ExecuteInEditMode.objectToCreate = objectToCreate;
+                        SS3DEIEM.objectToCreate = objectToCreate;
                         Repaint();
                     }
                     EditorStyles.label.wordWrap = true;
@@ -381,10 +384,13 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         /// Switches the current toolindex of this and EIEM (execute in edit mode)
         /// </summary>
         /// <param name="newIndex"></param>
-        private void SwitchToolIndex(int newIndex)
+        private void NewToolIndex(int newIndex)
         {
+            // Ignore if SS3DEIEM updated its currentToolIndex
+            if(currentToolIndex != SS3DEIEM.currentToolIndex) return;
+
             currentToolIndex = newIndex;
-            Toolbar_0_ExecuteInEditMode.currentToolIndex = newIndex;
+            SS3DEIEM.currentToolIndex = newIndex;
             Repaint();
         }
 
@@ -393,11 +399,11 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         /// </summary>
         private void UpdateZLayerVisability()
         {
-            if(Toolbar_0_ExecuteInEditMode.Instance == null) Debug.LogError("No Toolbar 0 EIEM found!");            
+            if(SS3DEIEM.Instance == null) Debug.LogError("No Toolbar 0 EIEM found!");            
             if(showAllZLayers)
             {
                 // Show all
-                foreach(Transform child in Toolbar_0_ExecuteInEditMode.Instance.parentOfItems)
+                foreach(Transform child in SS3DEIEM.Instance.parentOfItems)
                 {
                     child.gameObject.SetActive(true);
                 }
@@ -405,11 +411,11 @@ namespace SLIDDES.LevelEditor.SideScroller3D
             else
             {
                 // Hide all but 1
-                foreach(Transform child in Toolbar_0_ExecuteInEditMode.Instance.parentOfItems)
+                foreach(Transform child in SS3DEIEM.Instance.parentOfItems)
                 {
                     child.gameObject.SetActive(false);
                 }
-                Toolbar_0_ExecuteInEditMode.Instance.parentOfItems.Find(zLayerIndex.ToString())?.gameObject.SetActive(true);
+                SS3DEIEM.Instance.parentOfItems.Find(zLayerIndex.ToString())?.gameObject.SetActive(true);
             }
         }
     }

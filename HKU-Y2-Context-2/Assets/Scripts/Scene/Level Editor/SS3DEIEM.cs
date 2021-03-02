@@ -6,10 +6,13 @@ using UnityEditor;
 
 namespace SLIDDES.LevelEditor.SideScroller3D
 {
+    /// <summary>
+    /// Side Scroller 3D Excecute In Edit Mode
+    /// </summary>
     [ExecuteInEditMode]
-    public class Toolbar_0_ExecuteInEditMode : MonoBehaviour // Toolbar_0 can only communicate 1 way to this
+    public class SS3DEIEM : MonoBehaviour // SS#D can only communicate 1 way to this
     {
-        public static Toolbar_0_ExecuteInEditMode Instance { get; set; }
+        public static SS3DEIEM Instance { get; set; }
 
         public static bool inUse;
 
@@ -35,35 +38,127 @@ namespace SLIDDES.LevelEditor.SideScroller3D
 
         [HideInInspector] public int zIndex = 0;
 
+
+
         private void Awake()
         {
             // Set instance
             if(Instance != null) DestroyImmediate(Instance.gameObject);
             Instance = this;
-
-            // Get parent gameobject
-            //if(!GameObject.find)
-            print("awake");
         }
 
-        private void Start()
+        #region Enable, Destroy, OnFocus
+
+        void OnEnable()
         {
-            
+            SceneView.duringSceneGui += this.OnScene;
+            SceneView.duringSceneGui += this.OnSceneGUI;
+            // Assign parent
+            CreateParentItems();            
         }
 
-        private void Update()
+        private void OnDestroy()
         {
-            
+            SceneView.duringSceneGui -= this.OnScene;
+            SceneView.duringSceneGui -= this.OnSceneGUI;
+        }
+
+
+        #endregion
+
+        void OnScene(SceneView scene)
+        {
+            if(!inUse) return;
+
+            //Cursor.SetCursor(Resources.Load<Texture2D>("d_eyeDropper.Large"), Vector2.zero, CursorMode.Auto); causes flikkering
+            Event e = Event.current;
+
+            if(e.type != EventType.MouseLeaveWindow) // Prevent Screen position out of view frustum Error
+            {
+                GetMousePositionScene(scene);
+            }
+            else return;
+            // move custom gameobject here to show mousepos as alternative of Gizmos
+
+            //return;
+
+            // Get values
+            var controlID = GUIUtility.GetControlID(FocusType.Passive);
+            var eventType = e.GetTypeForControl(controlID);
+
+            // Left mouse button
+            if(e.button == 0)
+            {
+                if(eventType == EventType.MouseUp)
+                {
+                    //Debug.Log("Mouse Up!");
+                    GUIUtility.hotControl = controlID;
+                }
+                else if(eventType == EventType.MouseDrag)
+                {
+                    //Debug.Log("Mouse Drag!");
+                    //e.Use();
+                    switch(currentToolIndex)
+                    {
+                        case 0: PlaceItem(scene); break;
+                        case 1: RemoveItem(e, scene); break;
+                        default: Debug.LogError("toolindex"); break;
+                    }
+                }
+                else if(eventType == EventType.MouseDown)
+                {
+                    //Debug.Log("Mouse Down!");
+                    GUIUtility.hotControl = 0;
+                    //e.Use();
+                    switch(currentToolIndex)
+                    {
+                        case 0: PlaceItem(scene); break;
+                        case 1: RemoveItem(e, scene); break;
+                        default: Debug.LogError("toolindex"); break;
+                    }
+                }
+            }
+        }
+
+        private void OnSceneGUI(SceneView sceneView)
+        {
+            // Do your drawing here using Handles.
+            Handles.BeginGUI();
+            // Do your drawing here using GUI.
+            if(inUse)
+            {
+                if(GUI.Button(new Rect(10, 10, 120, 20), "Disable Editor (F6)"))
+                {
+                    inUse = false;
+                }
+            }           
+
+            Handles.EndGUI();
+
+            // Key triggers
+            Event e = Event.current;
+            if(e.type == EventType.KeyDown)
+            {
+                if(e.keyCode == KeyCode.F6) inUse = !inUse;
+                else if(e.keyCode == KeyCode.B)
+                {
+                    currentToolIndex = 0;
+                }
+                else if(e.keyCode == KeyCode.D)
+                {
+                    currentToolIndex = 1;
+                }
+            }
         }
 
         private void CreateParentItems()
         {
-            GameObject parent = GameObject.Find("[Editor Level 0] Parent");
+            GameObject parent = GameObject.Find("[SS3D] Parent");
             if(parent == null)
             {
                 // Create parent
                 parent = new GameObject();
-                parent.name = "[Editor Level 0] Parent";
+                parent.name = "[SS3D] Parent";
                 parent.transform.position = Vector3.zero;
                 parentOfItems = parent.transform;
             }
@@ -116,87 +211,9 @@ namespace SLIDDES.LevelEditor.SideScroller3D
             }
             return false;
         }
-
+               
 
         
-
-        void OnEnable()
-        {
-            SceneView.duringSceneGui += this.OnScene;
-            //Tools.hidden = true;
-            // Assign parent
-            CreateParentItems();
-        }
-
-        private void OnDestroy()
-        {
-            SceneView.duringSceneGui -= this.OnScene;
-            //Tools.hidden = false;
-        }
-
-        void OnScene(SceneView scene)
-        {
-            if(!inUse) return;
-
-            //Cursor.SetCursor(Resources.Load<Texture2D>("d_eyeDropper.Large"), Vector2.zero, CursorMode.Auto); causes flikkering
-            Event e = Event.current;
-            
-            if(e.type != EventType.MouseLeaveWindow) // Prevent Screen position out of view frustum Error
-            {
-                GetMousePositionScene(scene);
-            }
-            // move custom gameobject here to show mousepos as alternative of Gizmos
-
-            
-            if(Input.GetKeyDown(KeyCode.LeftControl))
-            {
-                Debug.Log("undo");
-                Undo.PerformUndo();
-            }
-
-            //return;
-
-            // Get values
-            var controlID = GUIUtility.GetControlID(FocusType.Passive);
-            var eventType = e.GetTypeForControl(controlID);
-
-            // Left mouse button
-            if(e.button == 0)
-            {
-                if(eventType == EventType.MouseUp)
-                {
-                    //Debug.Log("Mouse Up!");
-                    GUIUtility.hotControl = controlID;
-                    //e.Use();
-                }
-                else if(eventType == EventType.MouseDrag)
-                {
-                    //Debug.Log("Mouse Drag!");
-                    //e.Use();
-                    switch(currentToolIndex)
-                    {
-                        case 0: PlaceItem(scene); break;
-                        case 1: RemoveItem(e, scene); break;
-                        default: Debug.LogError("toolindex"); break;
-                    }
-                }
-                else if(eventType == EventType.MouseDown)
-                {
-                    //Debug.Log("Mouse Down!");
-                    GUIUtility.hotControl = 0;
-                    //e.Use();
-                    switch(currentToolIndex)
-                    {
-                        case 0: PlaceItem(scene); break;
-                        case 1: RemoveItem(e, scene); break;
-                        default: Debug.LogError("toolindex"); break;
-                    }
-                }
-            }          
-
-            
-        }
-
         #region OnScene Functions
 
         private void PlaceItem(SceneView scene)
@@ -226,7 +243,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
             }
             else
             {
-                Debug.LogWarning("[Level Editor 0] Please select an item to place.");
+                Debug.LogWarning("[SS3D] Please select an object from the 'Assets' dropdown to place.");
             }
         }
 
@@ -251,6 +268,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
             }
         }
 
+
         #endregion
 
         
@@ -271,8 +289,8 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         {
             Debug.Log("[Level Editor 0] Quitting the Editor");
             // Check if the instance gameobject is still there => destroy it
-            if(Toolbar_0_ExecuteInEditMode.Instance.gameObject != null)
-                MonoBehaviour.DestroyImmediate(Toolbar_0_ExecuteInEditMode.Instance.gameObject);
+            if(SS3DEIEM.Instance.gameObject != null)
+                MonoBehaviour.DestroyImmediate(SS3DEIEM.Instance.gameObject);
         }
     }
 }
