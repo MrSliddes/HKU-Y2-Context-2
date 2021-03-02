@@ -29,6 +29,8 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         /// </summary>
         public Vector3 mousePositionGUIPoint;
 
+        [HideInInspector] public int zIndex = 0;
+
         private void Awake()
         {
             // Set instance
@@ -79,7 +81,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
 
             mousePositionScene = ray.origin;
             mousePositionScene = SnapToGrid(mousePositionScene) - new Vector3(0.5f, 0.5f, 0);
-            mousePositionScene.z = 0;
+            mousePositionScene.z = zIndex;
         }
 
         private Vector3 SnapToGrid(Vector3 v)
@@ -104,7 +106,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
             {
                 if(hit.transform.gameObject != null)
                 {
-                    print(hit.transform.gameObject.name);
+                    //print(hit.transform.gameObject.name);
                     return true;
                 }
             }
@@ -217,8 +219,20 @@ namespace SLIDDES.LevelEditor.SideScroller3D
             if(objectToCreate != null)
             {
                 GameObject a = Instantiate(objectToCreate, mousePositionScene, Quaternion.identity);
+
                 if(parentOfItems == null) CreateParentItems();
-                a.transform.SetParent(parentOfItems);
+
+                // Find parent layer zIndex
+                Transform t = parentOfItems.Find(mousePositionScene.z.ToString());
+                if(t == null)
+                {
+                    // Create parent child
+                    GameObject b = new GameObject(mousePositionScene.z.ToString());
+                    b.transform.SetParent(parentOfItems);
+                    t = b.transform;
+                }                  
+
+                a.transform.SetParent(t);
                 Undo.RegisterCreatedObjectUndo(a, "Created " + a.name); // Add to undo stack
             }
             else
@@ -239,7 +253,12 @@ namespace SLIDDES.LevelEditor.SideScroller3D
 
             if(Physics.Raycast(ray, out hit))
             {
-                DestroyImmediate(hit.transform.gameObject);
+                // Check if hit is in same current layer
+                if(hit.transform.parent != null && hit.transform.parent.name == mousePositionScene.z.ToString())
+                {
+                    DestroyImmediate(hit.transform.gameObject);
+                }
+
             }
         }
 

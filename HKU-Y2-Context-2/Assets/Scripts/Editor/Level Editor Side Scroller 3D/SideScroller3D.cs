@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace SLIDDES.Editor.Window
+namespace SLIDDES.LevelEditor.SideScroller3D
 {
-    public class EditorWindowLevelEditor_0 : EditorWindow
+    /// <summary>
+    /// Main class for sidescroller3D
+    /// </summary>
+    public class SideScroller3D : EditorWindow
     {
         // TODO
         // toggle to disable editor, but still keep windows
@@ -21,12 +24,11 @@ namespace SLIDDES.Editor.Window
         public static bool inUse;
 
         // Editor Window Toolbar 0
-        public static EditorWindow windowToolbar_0;
         public static string toolbar_0_fileDirectory;
         /// <summary>
         /// The default file directory
         /// </summary>
-        private readonly static string toolbar_0_fileDirectoryDefault = "Assets/Prefabs/Level Editor";
+        public readonly static string toolbar_0_fileDirectoryDefault = "Assets/Prefabs/Level Editor";
 
         // EditorGUILayout
         private readonly int editorSpacePixels = 10;
@@ -39,13 +41,12 @@ namespace SLIDDES.Editor.Window
         private bool editorFoldout_0 = true;
 
         // Add menu item named "My Window" to the Window menu
-        [MenuItem("Window/SLIDDES/Level Editor/0 (Side Scroller)")]
+        [MenuItem("Window/SLIDDES/Level Editor/Side Scroller 3D/Settings", false, 2)]
         public static void ShowWindow()
         {
             //Show existing window instance. If one doesn't exist, make one.
-            EditorWindow window = EditorWindow.GetWindow(typeof(EditorWindowLevelEditor_0), false, "Lvl Editor 0"); // Name
-            window.minSize = new Vector2(500, 140);
-            windowToolbar_0 = EditorWindow.GetWindow(typeof(EditorWindowLevelEditor_0_Toolbar_0), false, "Lvl Editor Toolbar 0");
+            EditorWindow window = GetWindow(typeof(SideScroller3D), false, "SS3D Settings"); // Name
+            window.minSize = new Vector2(100, 140);
 
             // Load values
             //toolbar_0_fileDirectoryDefault = Application.dataPath + toolbar_0_fileDirectoryDefault; // Is here cause cannot set Application.dataPath at var declaration
@@ -63,14 +64,11 @@ namespace SLIDDES.Editor.Window
             // so that it will no longer do any drawing.
             SceneView.duringSceneGui -= this.OnSceneGUI;
 
-            GetWindow<EditorWindowLevelEditor_0_Toolbar_0>()?.Close(); // Close toolbar window too
+            //GetWindow<EditorWindowLevelEditor_0_Toolbar_0>()?.Close(); // Close toolbar window too
         }
 
         public void OnGUI()
         {
-            // Values
-            
-
             // Window code goes here
             EditorGUILayout.BeginVertical(); // Make it look like unity inspector
             editorScrollPosition = EditorGUILayout.BeginScrollView(editorScrollPosition);
@@ -83,7 +81,7 @@ namespace SLIDDES.Editor.Window
             {
                 if(GUILayout.Button("Show Toolbar 0", GUILayout.Height(30)))
                 {
-                    windowToolbar_0 = EditorWindow.GetWindow(typeof(EditorWindowLevelEditor_0_Toolbar_0), false, "Lvl Editor Toolbar 0");
+                    GetWindow(typeof(Toolbar_0), false, "Toolbar 0");
                 }
                 // Toolbar 0 file directory
                 EditorGUILayout.BeginHorizontal(EditorStyles.inspectorDefaultMargins);
@@ -119,7 +117,6 @@ namespace SLIDDES.Editor.Window
             SceneView.duringSceneGui -= this.OnSceneGUI;
             // Add (or re-add) the delegate.
             SceneView.duringSceneGui += this.OnSceneGUI;
-            Debug.Log("Selected LVL Editor");
         }
 
         void OnSceneGUI(SceneView sceneView)

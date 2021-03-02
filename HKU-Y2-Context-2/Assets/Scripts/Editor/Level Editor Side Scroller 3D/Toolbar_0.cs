@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace SLIDDES.Editor.Window
+namespace SLIDDES.LevelEditor.SideScroller3D
 {
     /// <summary>
     /// Included in here for now to keep it 1 file
     /// </summary>
-    public class EditorWindowLevelEditor_0_Toolbar_0 : EditorWindow
+    public class Toolbar_0 : EditorWindow
     {
         /// <summary>
         /// Is this toolbar currently inUse?
@@ -29,7 +29,7 @@ namespace SLIDDES.Editor.Window
         /// <summary>
         /// Contains the searchbar result
         /// </summary>
-        private string searchbarResult;
+        private string searchbarResult = "";
         /// <summary>
         /// The size of the asset picture
         /// </summary>
@@ -39,17 +39,24 @@ namespace SLIDDES.Editor.Window
         /// </summary>
         private Vector2 editorScrollPosition;
 
+        private int zDepthLayerIndex;
+        private string[] options = new string[] { "-20", "-10", "0" };
+        private string toolbar_0_fileDirectory;
 
+
+        [MenuItem("Window/SLIDDES/Level Editor/Side Scroller 3D/Toolbar 0", false, 1)]
         public static void ShowWindow()
         {
             //Show existing window instance. If one doesn't exist, make one.
-            EditorWindow window = EditorWindow.GetWindow(typeof(EditorWindowLevelEditor_0), false, "Lvl Editor 0"); // Name
+            EditorWindow window = EditorWindow.GetWindow(typeof(Toolbar_0), false, "Toolbar 0"); // Name
             window.minSize = new Vector2(500, 140);
         }
 
         private void Awake()
         {
             inUse = true;
+            // Load values
+            toolbar_0_fileDirectory = EditorPrefs.GetString("toolbar_0_fileDirectory", SideScroller3D.toolbar_0_fileDirectoryDefault);
         }
 
         #region OnEnable & OnDestroy
@@ -116,13 +123,18 @@ namespace SLIDDES.Editor.Window
                 GetWindow<SceneView>().in2DMode = true;
             }
 
+            // Z index
+            EditorGUIUtility.labelWidth = 60;
+            zDepthLayerIndex = EditorGUILayout.IntField("Z Index", zDepthLayerIndex);
+            Toolbar_0_ExecuteInEditMode.Instance.zIndex = zDepthLayerIndex;
+
             EditorGUILayout.EndHorizontal();
             #endregion
 
             // Get asset GUIDs from folder with type GameObject
-            if(EditorWindowLevelEditor_0.toolbar_0_fileDirectory != null) // Prevent wierd bug
+            if(toolbar_0_fileDirectory != null) // Prevent wierd bug
             {
-                string[] folderContent = AssetDatabase.FindAssets("t:GameObject", new[] { EditorWindowLevelEditor_0.toolbar_0_fileDirectory });
+                string[] folderContent = AssetDatabase.FindAssets("t:GameObject", new[] { toolbar_0_fileDirectory });
 
                 // Display loaded assets amount
                 EditorGUILayout.LabelField("Loaded: " + folderContent.Length + " Assets", EditorStyles.helpBox);
@@ -133,7 +145,7 @@ namespace SLIDDES.Editor.Window
                 GameObject[] prefabs = new GameObject[folderContent.Length];
                 //Debug.Log(Screen.width);
                 //Debug.Log(Mathf.FloorToInt(Screen.width / editorAssetDisplaySize.x));
-                int maxRowAmount = Mathf.FloorToInt(Screen.width / editorAssetDisplaySize.x) - 2;
+                int maxRowAmount = Mathf.Clamp(Mathf.FloorToInt(Screen.width / editorAssetDisplaySize.x) - 2, 1, 99);
                 int closer = maxRowAmount;
                 // Get prefabs
                 for(int i = 0; i < folderContent.Length; i++)
@@ -163,7 +175,10 @@ namespace SLIDDES.Editor.Window
         private void CreateItemButton(GameObject item)
         {
             // Hide button if searchbarResult is not the same
-            if(!item.name.ToLower().Contains(searchbarResult.ToLower())) return;
+            if(searchbarResult != "")
+            {
+                if(!item.name.ToLower().Contains(searchbarResult.ToLower())) return;
+            }
 
             EditorGUILayout.BeginVertical();
             Color c = GUI.color;

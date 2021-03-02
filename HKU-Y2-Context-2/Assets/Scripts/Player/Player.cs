@@ -6,15 +6,22 @@ public class Player : MonoBehaviour
 {
     public float health = 3;
     public float movementSpeed = 5f;
+
     public float jumpForce;
+    public float jumpVelTillGravity = 8;
     public float gravityForce = 1;
+    public float maxGravityVelocity = -20;
+
     public float invincibleTime = 3f;
     public PlayerState playerState;
 
     [Header("Required Components")]
     public SpriteRenderer spriteRenderer;
-    [Header("Other")]
-    public GameObject weaponSpritePivot;
+
+    [Header("Weapon")]
+    public GameObject weaponPivot;
+    public Animator weaponStickAnimator;
+    public GameObject prefabWeaponStickDamage;
     public GameObject laserModelPivot;
 
     private bool isInvincible;
@@ -25,9 +32,15 @@ public class Player : MonoBehaviour
     /// Current input of player
     /// </summary>
     private Vector3 input;
+    /// <summary>
+    /// Used for rb movement
+    /// </summary>
+    private Vector3 inputDirection;
 
+    private bool addGravityForce;
     private bool cameOffGround;
     private bool hasEnterdNewPlayerState = false;
+    private int currentWeapon = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -46,26 +59,23 @@ public class Player : MonoBehaviour
         PlayerInput();
         UpdatePlayerState();
 
-        ShootWeapon();
+        UseWeapon();
+
+        inputDirection = new Vector3(input.x * movementSpeed, rb.velocity.y, rb.velocity.z);
     }
 
     private void FixedUpdate()
     {
-        // Move rb
-        //Vector3 direction = Vector3.zero;
-        //// Movement
-        //direction += transform.position + new Vector3(input.x * movementSpeed, 0, 0) * Time.fixedDeltaTime;
-        //// Gravity
-        //if(!IsGrounded()) direction += (transform.position + (Vector3.down * gravityForce) * Time.fixedDeltaTime);
-        //rb.MovePosition(direction);
-
-        //rb.velocity = new Vector3(input.x * movementSpeed, rb.velocity.y, rb.velocity.z);
-        
         // Movement
-        Vector3 movement = new Vector3(input.x, 0, 0);
-        rb.AddForce(movement * movementSpeed * 100 * Time.fixedDeltaTime, ForceMode.Force);
+        rb.velocity = inputDirection;
 
-        
+        // Gravity
+        if(addGravityForce || !IsGrounded() && playerState != PlayerState.jump)
+        {
+            rb.AddForce(Vector3.down * gravityForce * 1000, ForceMode.Force);
+        }
+        // Limit gravity
+        if(rb.velocity.y < maxGravityVelocity) rb.velocity = new Vector3(rb.velocity.x, maxGravityVelocity, rb.velocity.z);
     }
 
     public void EnterNewPlayerState(PlayerState newState)
@@ -97,7 +107,19 @@ public class Player : MonoBehaviour
     private IEnumerator InvisTimeAsync()
     {
         isInvincible = true;
-        yield return new WaitForSeconds(invincibleTime);
+        // Sprite flikker
+        Color f = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 100f / 255f);
+        Color c = spriteRenderer.color;
+        spriteRenderer.color = f;
+        float timeLeft = invincibleTime;
+        while(timeLeft > 0)
+        {
+            if(spriteRenderer.color == c) spriteRenderer.color = f; else spriteRenderer.color = c;
+            timeLeft -= 0.15f;
+            yield return new WaitForSeconds(0.15f);
+        }
+
+        spriteRenderer.color = c;
         isInvincible = false;
         yield break;
     }
@@ -116,7 +138,7 @@ public class Player : MonoBehaviour
                 // Update
 
                 // Exit
-                if(Input.GetKeyDown(KeyCode.Space))
+                if(Input.GetKeyDown(KeyCode.Space) && IsGrounded())
                 {
                     // Goto jump
                     EnterNewPlayerState(PlayerState.jump);
@@ -140,16 +162,20 @@ public class Player : MonoBehaviour
                 if(!hasEnterdNewPlayerState)
                 {
                     hasEnterdNewPlayerState = true;
-                    rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                    rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
                     cameOffGround = false;
+                    addGravityForce = false;
                 }
 
                 // Update
                 if(!IsGrounded()) cameOffGround = true;
+                // Check for negative velocity, that means the player is coming down
+                addGravityForce = rb.velocity.y < jumpVelTillGravity;
 
                 // Exit
                 if(cameOffGround && IsGrounded())
                 {
+                    addGravityForce = false;
                     EnterNewPlayerState(PlayerState.idle);
                 }
                 break;
@@ -175,14 +201,14 @@ public class Player : MonoBehaviour
         {
             spriteRenderer.flipX = false;
             laserModelPivot.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
-            weaponSpritePivot.transform.rotation = Quaternion.Euler(Vector3.zero);
+            weaponPivot.transform.rotation = Quaternion.Euler(Vector3.zero);
 
         }
         else if(input.x < 0)
         {
             spriteRenderer.flipX = true;
             laserModelPivot.transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
-            weaponSpritePivot.transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
+            weaponPivot.transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
         }
     }
 
@@ -192,7 +218,7 @@ public class Player : MonoBehaviour
     /// <returns></returns>
     private bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, -Vector3.up, capsuleCollider.bounds.extents.y + 0.01f);
+        return Physics.Raycast(transform.position, Vector3.down, capsuleCollider.bounds.extents.y + 0.01f);
     }
 
     private void PlayerInput()
@@ -201,19 +227,33 @@ public class Player : MonoBehaviour
         FlipSprite();        
     }
 
-    private void ShootWeapon()
+    private void UseWeapon()
     {
         // Lazer
         if(Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
         {
-            RaycastHit hit;
-            if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.right), out hit, Mathf.Infinity))
+            switch(currentWeapon)
             {
-                // Check for Idamageable
-                hit.transform.GetComponent<IDamageable>()?.ReceiveDamage(1);
+                case 0:
+                    // Stick
+                    // prob should check if animation is done playing
+                    weaponStickAnimator.Play("Anim_Player_Weapon_Stick_Swing");
+                    Instantiate(prefabWeaponStickDamage, weaponPivot.transform.position, weaponPivot.transform.rotation);
+                    break;
+                case 1:
+                    // Laser
+                    RaycastHit hit;
+                    if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.right), out hit, Mathf.Infinity))
+                    {
+                        // Check for Idamageable
+                        hit.transform.GetComponent<IDamageable>()?.ReceiveDamage(1);
+                    }
+                    // Show laser model
+                    StartCoroutine(ShowLaser());
+                    break;
+                default:Debug.LogError("Unknown weapon" + currentWeapon); break;
             }
-            // Show laser model
-            StartCoroutine(ShowLaser());
+
         }
     }
 
