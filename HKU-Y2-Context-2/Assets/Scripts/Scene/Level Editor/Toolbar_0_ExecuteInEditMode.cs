@@ -7,14 +7,18 @@ using UnityEditor;
 namespace SLIDDES.LevelEditor.SideScroller3D
 {
     [ExecuteInEditMode]
-    public class Toolbar_0_ExecuteInEditMode : MonoBehaviour
+    public class Toolbar_0_ExecuteInEditMode : MonoBehaviour // Toolbar_0 can only communicate 1 way to this
     {
         public static Toolbar_0_ExecuteInEditMode Instance { get; set; }
+
+        public static bool inUse;
+
+        public static int currentToolIndex;
 
         /// <summary>
         /// The current object to create
         /// </summary>
-        public GameObject objectToCreate;
+        public static GameObject objectToCreate;
         /// <summary>
         /// The parent of all created items
         /// </summary>
@@ -132,6 +136,8 @@ namespace SLIDDES.LevelEditor.SideScroller3D
 
         void OnScene(SceneView scene)
         {
+            if(!inUse) return;
+
             //Cursor.SetCursor(Resources.Load<Texture2D>("d_eyeDropper.Large"), Vector2.zero, CursorMode.Auto); causes flikkering
             Event e = Event.current;
             
@@ -148,11 +154,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                 Undo.PerformUndo();
             }
 
-            // Disable drag with right mouse button
-            if(e.isMouse && e.type == EventType.MouseDrag && e.button == 1)
-            {
-                //Event.current.Use();
-            }
+            //return;
 
             // Get values
             var controlID = GUIUtility.GetControlID(FocusType.Passive);
@@ -165,45 +167,32 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                 {
                     //Debug.Log("Mouse Up!");
                     GUIUtility.hotControl = controlID;
-                    e.Use();
+                    //e.Use();
                 }
                 else if(eventType == EventType.MouseDrag)
                 {
                     //Debug.Log("Mouse Drag!");
-                    e.Use();
-                    PlaceItem(scene);
+                    //e.Use();
+                    switch(currentToolIndex)
+                    {
+                        case 0: PlaceItem(scene); break;
+                        case 1: RemoveItem(e, scene); break;
+                        default: Debug.LogError("toolindex"); break;
+                    }
                 }
                 else if(eventType == EventType.MouseDown)
                 {
                     //Debug.Log("Mouse Down!");
                     GUIUtility.hotControl = 0;
-                    e.Use();
-                    PlaceItem(scene);
+                    //e.Use();
+                    switch(currentToolIndex)
+                    {
+                        case 0: PlaceItem(scene); break;
+                        case 1: RemoveItem(e, scene); break;
+                        default: Debug.LogError("toolindex"); break;
+                    }
                 }
-            }
-            // Right mouse button
-            else if(e.button == 1)
-            {
-                if(eventType == EventType.MouseUp)
-                {
-                    //Debug.Log("R Mouse Up!");
-                    GUIUtility.hotControl = controlID;
-                    e.Use();
-                }
-                else if(eventType == EventType.MouseDrag)
-                {
-                    //Debug.Log("R Mouse Drag!");
-                    e.Use();
-                    RemoveItem(e, scene);
-                }
-                else if(eventType == EventType.MouseDown)
-                {
-                    //Debug.Log("R Mouse Down!");
-                    GUIUtility.hotControl = 0;
-                    e.Use();
-                    RemoveItem(e, scene);
-                }
-            }           
+            }          
 
             
         }

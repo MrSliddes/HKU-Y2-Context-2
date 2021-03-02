@@ -14,6 +14,10 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         /// Is this toolbar currently inUse?
         /// </summary>
         public static bool inUse;
+        /// <summary>
+        /// The current tool selected (draw, erase, etc)
+        /// </summary>
+        public static int currentToolIndex;
 
         /// <summary>
         /// Reference to the toolbar_0_ExecuteInEditMode GameObject in the scene
@@ -38,9 +42,13 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         /// Used for editor scrollbar
         /// </summary>
         private Vector2 editorScrollPosition;
+        private bool editorFoldoutTool = true;
+        private bool editorFoldoutAssets;
+        private bool showAllZLayers;
+        private int searchbarResultAmount;
+        private int currentAssetViewIndex;
 
-        private int zDepthLayerIndex;
-        private string[] options = new string[] { "-20", "-10", "0" };
+        private int zLayerIndex;
         private string toolbar_0_fileDirectory;
 
 
@@ -48,7 +56,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         public static void ShowWindow()
         {
             //Show existing window instance. If one doesn't exist, make one.
-            EditorWindow window = EditorWindow.GetWindow(typeof(Toolbar_0), false, "Toolbar 0"); // Name
+            EditorWindow window = GetWindow(typeof(Toolbar_0), false, "Toolbar 0", true); // Name
             window.minSize = new Vector2(500, 140);
         }
 
@@ -56,10 +64,10 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         {
             inUse = true;
             // Load values
-            toolbar_0_fileDirectory = EditorPrefs.GetString("toolbar_0_fileDirectory", SideScroller3D.toolbar_0_fileDirectoryDefault);
+            toolbar_0_fileDirectory = EditorPrefs.GetString("toolbar_0_fileDirectory", "Assets/Prefabs/Level Editor");
         }
 
-        #region OnEnable & OnDestroy
+        #region OnEnable, OnDestroy, OnFocus
 
         private void OnEnable()
         {
@@ -70,6 +78,17 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         {
             inUse = false;
             if(toolbar_0_ExecuteInEditModeGameObject != null) DestroyImmediate(toolbar_0_ExecuteInEditModeGameObject);
+            
+            // When the window is destroyed, remove the delegate
+            SceneView.duringSceneGui -= this.OnSceneGUI;
+        }
+
+        private void OnFocus()
+        {
+            // Remove delegate listener if it has previously been assigned. (Not thread save?)
+            SceneView.duringSceneGui -= this.OnSceneGUI;
+            // Add (or re-add) the delegate.
+            SceneView.duringSceneGui += this.OnSceneGUI;
         }
 
         #endregion
@@ -79,17 +98,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
             // Window code goes here
             EditorGUILayout.BeginVertical(EditorStyles.inspectorDefaultMargins); // Make it look like unity inspector
             editorScrollPosition = EditorGUILayout.BeginScrollView(editorScrollPosition);
-            GUILayout.Space(editorSpacePixels);
-
-            // Values
-            //Change sceneView Camera if not in playmode >>> Somehow disabled the textfields...
-                //if(!Application.isPlaying)
-                //{
-                //    Vector3 position = UnityEditor.EditorWindow.GetWindow<SceneView>().pivot; // Position
-                //    position.z = -10;
-                //    UnityEditor.EditorWindow.GetWindow<SceneView>().pivot = position;
-                //    UnityEditor.EditorWindow.GetWindow<SceneView>().in2DMode = true;
-                //}
+            EditorGUILayout.Space();
 
             // Object that runs in editor mode (allows user to create objects while in edit mode)
             if(Toolbar_0_ExecuteInEditMode.Instance == null)
@@ -105,73 +114,197 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                 Toolbar_0_ExecuteInEditMode.Instance = toolbar_0_ExecuteInEditModeGameObject.GetComponent<Toolbar_0_ExecuteInEditMode>();
             }
 
-            #region Top banner
-            EditorGUILayout.BeginHorizontal();
+            #region Events
+            Event e = Event.current;
 
-            // Searchbar
-            EditorGUIUtility.labelWidth = 80;
-            searchbarResult = EditorGUILayout.TextField("Search Asset", searchbarResult, GUILayout.Width(250));
-
-            // 2D view button
-            GUILayout.FlexibleSpace();
-            if(GUILayout.Button("2D View", GUILayout.Width(60)))
+            if(e.isKey)
             {
-                // This stuff apperently cannot auto run, disabled 
-                Vector3 position = GetWindow<SceneView>().pivot; // Position
-                position.z = -10;
-                GetWindow<SceneView>().pivot = position;
-                GetWindow<SceneView>().in2DMode = true;
+                if(e.type == EventType.KeyDown)
+                {
+                    if(e.keyCode == KeyCode.F6) inUse = !inUse;
+                }
+                else if(e.keyCode == KeyCode.B)
+                {
+                    SwitchToolIndex(0);
+                }
+                else if(e.keyCode == KeyCode.D)
+                {
+                    SwitchToolIndex(1);
+                }
             }
-
-            // Z index
-            EditorGUIUtility.labelWidth = 60;
-            zDepthLayerIndex = EditorGUILayout.IntField("Z Index", zDepthLayerIndex);
-            Toolbar_0_ExecuteInEditMode.Instance.zIndex = zDepthLayerIndex;
-
-            EditorGUILayout.EndHorizontal();
             #endregion
 
-            // Get asset GUIDs from folder with type GameObject
-            if(toolbar_0_fileDirectory != null) // Prevent wierd bug
+            #region Tools
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorStyles.foldout.fontStyle = FontStyle.Bold;
+            editorFoldoutTool = EditorGUILayout.Foldout(editorFoldoutTool, " Tools", true);
+
+            if(editorFoldoutTool)
             {
-                string[] folderContent = AssetDatabase.FindAssets("t:GameObject", new[] { toolbar_0_fileDirectory });
-
-                // Display loaded assets amount
-                EditorGUILayout.LabelField("Loaded: " + folderContent.Length + " Assets", EditorStyles.helpBox);
-
-                // Display assets
-                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-
-                GameObject[] prefabs = new GameObject[folderContent.Length];
-                //Debug.Log(Screen.width);
-                //Debug.Log(Mathf.FloorToInt(Screen.width / editorAssetDisplaySize.x));
-                int maxRowAmount = Mathf.Clamp(Mathf.FloorToInt(Screen.width / editorAssetDisplaySize.x) - 2, 1, 99);
-                int closer = maxRowAmount;
-                // Get prefabs
-                for(int i = 0; i < folderContent.Length; i++)
+                EditorGUILayout.BeginHorizontal();
+                // In use button
+                Color c = GUI.color;
+                if(inUse) GUI.color = Color.green; else GUI.color = Color.red;
+                if(GUILayout.Button(new GUIContent("In Use", "Toggle Editor On/Off"), GUILayout.Width(100)))
                 {
-                    closer--;
-                    if(i % maxRowAmount == 0)
+                    inUse = !inUse;
+                    Toolbar_0_ExecuteInEditMode.inUse = inUse;
+                }
+                GUI.color = c;
+                EditorGUILayout.Space(10);
+
+                // Tools select
+                GUIContent[] g = new GUIContent[] { new GUIContent("", Resources.Load<Texture2D>("d_Grid.PaintTool"), "Paint With Mouse (B)\nOnly Applies To Current Z Layer!"),
+                                                    new GUIContent("", Resources.Load<Texture2D>("d_Grid.EraserTool"), "Erase With Mouse (D)\nOnly Applies To Current Z Layer!" )};
+                SwitchToolIndex(GUILayout.Toolbar(currentToolIndex, g, GUILayout.MaxWidth(100)));
+                EditorGUILayout.Space();
+
+                // Z index
+                EditorGUIUtility.labelWidth = 10;
+                int prevLayerIndex = zLayerIndex; // Prevent updating zLayerVisablity every frame
+                zLayerIndex = EditorGUILayout.IntField("Z", zLayerIndex);
+                Toolbar_0_ExecuteInEditMode.Instance.zIndex = zLayerIndex;
+                if(zLayerIndex != prevLayerIndex) UpdateZLayerVisability();
+                // Z index layer visablility
+                Texture2D tEye; if(showAllZLayers) tEye = Resources.Load<Texture2D>("d_scenevis_visible_hover"); else tEye = Resources.Load<Texture2D>("d_scenevis_hidden_hover");
+                if(GUILayout.Button(new GUIContent("", tEye, "Show All Z Layers Or Only Current Layer")))
+                {
+                    showAllZLayers = !showAllZLayers;
+                    UpdateZLayerVisability();
+                }
+                EditorGUILayout.Space();
+
+                // 2D view button
+                if(GUILayout.Button("2D View", GUILayout.Width(60)))
+                {
+                    // This stuff apperently cannot auto run, disabled 
+                    if(!GetWindow<SceneView>().in2DMode)
                     {
-                        EditorGUILayout.BeginHorizontal();
+                        Vector3 position = GetWindow<SceneView>().pivot; // Position
+                        position.z = -10;
+                        GetWindow<SceneView>().pivot = position;
+                        GetWindow<SceneView>().in2DMode = true;
                     }
-                    prefabs[i] = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(folderContent[i]), typeof(GameObject)) as GameObject;
-                    CreateItemButton(prefabs[i]);
-                    if(closer <= 0)
+                    else
                     {
-                        EditorGUILayout.EndHorizontal();
-                        closer = maxRowAmount;
+                        GetWindow<SceneView>().in2DMode = false;
                     }
                 }
 
-                EditorGUILayout.EndVertical();
+
+                GUILayout.FlexibleSpace();
+                EditorGUILayout.EndHorizontal();
             }
+            if(editorFoldoutTool) EditorGUILayout.Space();
+            EditorGUILayout.EndVertical();
+            #endregion
+
+            #region Asset display
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorStyles.foldout.fontStyle = FontStyle.Bold;
+            editorFoldoutAssets = EditorGUILayout.Foldout(editorFoldoutAssets, " Assets", true);
+
+            if(editorFoldoutAssets)
+            {
+                // Get asset GUIDs from folder with type GameObject
+                if(toolbar_0_fileDirectory != null) // Prevent wierd bug
+                {
+                    string[] folderContent = AssetDatabase.FindAssets("t:GameObject", new[] { toolbar_0_fileDirectory });
+
+                    EditorGUILayout.BeginHorizontal();
+                    // Searchbar
+                    EditorGUIUtility.labelWidth = 80;
+                    searchbarResult = EditorGUILayout.TextField("Search Asset", searchbarResult, GUILayout.Width(250));
+                    // Toggle asset view
+                    if(GUILayout.Button(new GUIContent("", Resources.Load<Texture2D>("d_UnityEditor.SceneHierarchyWindow"), "Change View Layout")))
+                    {
+                        currentAssetViewIndex++;
+                        if(currentAssetViewIndex > 1) currentAssetViewIndex = 0;
+                    }
+                    // Display loaded assets amount
+                    EditorGUILayout.LabelField("Loaded: " + folderContent.Length + " Assets", EditorStyles.helpBox);
+                    searchbarResultAmount = 0; // updated at CreateItemButton, not working, doesnt update after calc
+                    //EditorGUILayout.LabelField("Showing: " + searchbarResultAmount.ToString() + " Assets", EditorStyles.helpBox);
+                    GUILayout.FlexibleSpace();
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.Space(editorSpacePixels);
+
+                    // Display assets
+                    EditorGUILayout.BeginVertical();
+
+                    GameObject[] prefabs = new GameObject[folderContent.Length];
+
+                    switch(currentAssetViewIndex)
+                    {
+                        case 0:
+                            // Display as grid
+                            int maxRowAmount = Mathf.Clamp(Mathf.FloorToInt(Screen.width / editorAssetDisplaySize.x) - 2, 1, 99);
+                            int closer = maxRowAmount;
+                            // Get prefabs
+                            for(int i = 0; i < folderContent.Length; i++)
+                            {
+                                closer--;
+                                if(i % maxRowAmount == 0)
+                                {
+                                    EditorGUILayout.BeginHorizontal();
+                                }
+                                prefabs[i] = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(folderContent[i]), typeof(GameObject)) as GameObject;
+                                CreateItemButton(prefabs[i]);
+                                if(closer <= 0)
+                                {
+                                    EditorGUILayout.EndHorizontal();
+                                    closer = maxRowAmount;
+                                }
+                            }
+                            break;
+                        case 1:
+                            // Display vertically
+                            for(int i = 0; i < folderContent.Length; i++)
+                            {
+                                prefabs[i] = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(folderContent[i]), typeof(GameObject)) as GameObject;
+                                CreateItemButton(prefabs[i]);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    EditorGUILayout.EndVertical();
+                }
+            }
+            EditorGUILayout.EndVertical();
+            #endregion
 
             // Close off
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
         }
 
+        private void OnSceneGUI(SceneView sceneView)
+        {
+            // Do your drawing here using Handles.
+            Handles.BeginGUI();
+            // Do your drawing here using GUI.
+            if(inUse)
+            {
+                if(GUI.Button(new Rect(10, 10, 120, 20), "Disable Editor (F6)"))
+                {
+                    inUse = false;
+                }
+            }
+            // Event
+            Event e = Event.current;
+            if(e.type == EventType.KeyDown)
+            {
+                if(e.keyCode == KeyCode.F6) inUse = !inUse;
+            }
+            Handles.EndGUI();
+        }
+
+        /// <summary>
+        /// Create selectable GUI button
+        /// </summary>
+        /// <param name="item"></param>
         private void CreateItemButton(GameObject item)
         {
             // Hide button if searchbarResult is not the same
@@ -179,34 +312,111 @@ namespace SLIDDES.LevelEditor.SideScroller3D
             {
                 if(!item.name.ToLower().Contains(searchbarResult.ToLower())) return;
             }
+            searchbarResultAmount++;
 
-            EditorGUILayout.BeginVertical();
+            // Based on currentAssetViewIndex show button
             Color c = GUI.color;
-            if(objectToCreate == item)
+            switch(currentAssetViewIndex)
             {
-                GUI.color = Color.green;
+                case 0:
+                    // Grid button
+                    EditorGUILayout.BeginVertical();
+                    if(objectToCreate == item)
+                    {
+                        GUI.color = Color.green;
+                    }
+                    if(GUILayout.Button(AssetPreview.GetAssetPreview(item), GUILayout.Width(editorAssetDisplaySize.x), GUILayout.Height(editorAssetDisplaySize.y)))
+                    {
+                        // Select button
+                        if(objectToCreate == item)
+                        {
+                            // User clicked already selected button, deselect it
+                            objectToCreate = null;
+                        }
+                        else
+                        {
+                            objectToCreate = item;
+                        }
+                        Toolbar_0_ExecuteInEditMode.objectToCreate = objectToCreate;
+                        Repaint();
+                    }
+                    EditorStyles.label.wordWrap = true;
+                    EditorGUILayout.LabelField(item.name, EditorStyles.wordWrappedLabel);
+                    GUI.color = c;
+                    EditorGUILayout.EndVertical();
+                    break;
+                case 1:
+                    // Vertaclly layerd button
+                    EditorGUILayout.BeginHorizontal();                    
+                    if(objectToCreate == item)
+                    {
+                        GUI.color = Color.green;
+                    }
+                    if(GUILayout.Button(AssetPreview.GetAssetPreview(item), GUILayout.Width(editorAssetDisplaySize.x), GUILayout.Height(editorAssetDisplaySize.y)))
+                    {
+                        // Select button
+                        if(objectToCreate == item)
+                        {
+                            // User clicked already selected button, deselect it
+                            objectToCreate = null;
+                        }
+                        else
+                        {
+                            objectToCreate = item;
+                        }
+                        Toolbar_0_ExecuteInEditMode.objectToCreate = objectToCreate;
+                        Repaint();
+                    }
+                    EditorStyles.label.wordWrap = true;
+                    EditorGUILayout.LabelField(item.name, EditorStyles.wordWrappedLabel);
+                    GUI.color = c;
+                    EditorGUILayout.EndHorizontal();
+                    break;
+                default: Debug.LogError("Button building"); break;
             }
-            if(GUILayout.Button(AssetPreview.GetAssetPreview(item), GUILayout.Width(editorAssetDisplaySize.x), GUILayout.Height(editorAssetDisplaySize.y)))
-            {
-                // Select button
-                if(objectToCreate == item)
-                {
-                    // User clicked already selected button, deselect it
-                    objectToCreate = null;
-                }
-                else
-                {
-                    objectToCreate = item;
-                }
-                if(toolbar_0_ExecuteInEditModeGameObject != null) toolbar_0_ExecuteInEditModeGameObject.GetComponent<Toolbar_0_ExecuteInEditMode>().objectToCreate = objectToCreate;
-                Repaint();
-            }
-            //GUILayout.Label(item.name, EditorStyles.miniLabel);
-            EditorStyles.label.wordWrap = true;
-            EditorGUILayout.LabelField(item.name, EditorStyles.wordWrappedLabel);
-            GUI.color = c;
-            EditorGUILayout.EndVertical();
+
         }
 
+        /// <summary>
+        /// Switches the current toolindex of this and EIEM (execute in edit mode)
+        /// </summary>
+        /// <param name="newIndex"></param>
+        private void SwitchToolIndex(int newIndex)
+        {
+            currentToolIndex = newIndex;
+            Toolbar_0_ExecuteInEditMode.currentToolIndex = newIndex;
+            Repaint();
+        }
+
+        /// <summary>
+        /// Updates the current z layer visabilty
+        /// </summary>
+        private void UpdateZLayerVisability()
+        {
+            if(Toolbar_0_ExecuteInEditMode.Instance == null) Debug.LogError("No Toolbar 0 EIEM found!");            
+            if(showAllZLayers)
+            {
+                // Show all
+                foreach(Transform child in Toolbar_0_ExecuteInEditMode.Instance.parentOfItems)
+                {
+                    child.gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                // Hide all but 1
+                foreach(Transform child in Toolbar_0_ExecuteInEditMode.Instance.parentOfItems)
+                {
+                    child.gameObject.SetActive(false);
+                }
+                Toolbar_0_ExecuteInEditMode.Instance.parentOfItems.Find(zLayerIndex.ToString())?.gameObject.SetActive(true);
+            }
+        }
     }
 }
+
+// Used links
+// Drawing SceneGUI https://answers.unity.com/questions/58018/drawing-to-the-scene-from-an-editorwindow.html
+// Find assets https://docs.unity3d.com/2020.1/Documentation/ScriptReference/AssetDatabase.FindAssets.html
+// Get assets without resources folder https://gamedev.stackexchange.com/questions/160497/how-to-instantiate-prefab-outside-resources-folder/160537
+// Load asset at path https://docs.unity3d.com/2020.1/Documentation/ScriptReference/AssetDatabase.LoadAssetAtPath.html
