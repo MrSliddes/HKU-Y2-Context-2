@@ -22,7 +22,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         /// <summary>
         /// Reference to the toolbar_0_ExecuteInEditMode GameObject in the scene
         /// </summary>
-        public GameObject toolbar_0_ExecuteInEditModeGameObject;
+        public GameObject refSS3DEIEM;
         /// <summary>
         /// The object to create when clicking
         /// </summary>
@@ -79,7 +79,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         private void OnDestroy()
         {
             inUse = false;
-            if(toolbar_0_ExecuteInEditModeGameObject != null) DestroyImmediate(toolbar_0_ExecuteInEditModeGameObject);
+            if(refSS3DEIEM != null) DestroyImmediate(refSS3DEIEM);
             
             // When the window is destroyed, remove the delegate
             SceneView.duringSceneGui -= this.OnSceneGUI;
@@ -108,15 +108,26 @@ namespace SLIDDES.LevelEditor.SideScroller3D
             // Object that runs in editor mode (allows user to create objects while in edit mode)
             if(SS3DEIEM.Instance == null)
             {
-                // Remove old ref if it exists
-                if(toolbar_0_ExecuteInEditModeGameObject != null) DestroyImmediate(toolbar_0_ExecuteInEditModeGameObject);
+                // Link old
+                if(refSS3DEIEM != null)
+                {
+                    SS3DEIEM.Instance = refSS3DEIEM.GetComponent<SS3DEIEM>();
+                }
+                // Check for existing
+                else if(FindObjectOfType<SS3DEIEM>() != null)
+                {
+                    SS3DEIEM.Instance = FindObjectOfType<SS3DEIEM>();
+                }
+                else
+                {
+                    // Create new reference object
+                    refSS3DEIEM = new GameObject();
+                    refSS3DEIEM.transform.position = Vector3.zero;
+                    refSS3DEIEM.name = "[SS3D] Temporary GameObject";
+                    refSS3DEIEM.AddComponent<SS3DEIEM>();
+                    SS3DEIEM.Instance = refSS3DEIEM.GetComponent<SS3DEIEM>();
+                }
 
-                // Create new reference object
-                toolbar_0_ExecuteInEditModeGameObject = new GameObject();
-                toolbar_0_ExecuteInEditModeGameObject.transform.position = Vector3.zero;
-                toolbar_0_ExecuteInEditModeGameObject.name = "[SS3D] Temporary GameObject";
-                toolbar_0_ExecuteInEditModeGameObject.AddComponent<SS3DEIEM>();
-                SS3DEIEM.Instance = toolbar_0_ExecuteInEditModeGameObject.GetComponent<SS3DEIEM>();
             }
 
             #region Events
@@ -166,6 +177,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
 
                 // Z index
                 EditorGUIUtility.labelWidth = 10;
+                EditorGUIUtility.fieldWidth = 35;
                 int prevLayerIndex = zLayerIndex; // Prevent updating zLayerVisablity every frame
                 zLayerIndex = EditorGUILayout.IntField("Z", zLayerIndex);
                 SS3DEIEM.Instance.zIndex = zLayerIndex;
@@ -212,7 +224,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
             if(editorFoldoutAssets)
             {
                 // Get asset GUIDs from folder with type GameObject
-                if(assetsFileDirectory != null) // Prevent wierd bug
+                if(assetsFileDirectory != null && AssetDatabase.IsValidFolder(assetsFileDirectory))
                 {
                     string[] folderContent = AssetDatabase.FindAssets("t:GameObject", new[] { assetsFileDirectory });
 
@@ -302,6 +314,12 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                     Repaint();
                 }
                 EditorGUILayout.EndHorizontal();
+                // Check if file directory exists
+                if(!AssetDatabase.IsValidFolder(assetsFileDirectory))
+                {
+                    // Display warning message
+                    EditorGUILayout.HelpBox("Folder not found at: " + assetsFileDirectory, MessageType.Error);
+                }
             }
 
             EditorGUILayout.EndVertical();

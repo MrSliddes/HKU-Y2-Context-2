@@ -51,16 +51,16 @@ namespace SLIDDES.LevelEditor.SideScroller3D
 
         void OnEnable()
         {
-            SceneView.duringSceneGui += this.OnScene;
             SceneView.duringSceneGui += this.OnSceneGUI;
+            SceneView.duringSceneGui += this.OnScene;
             // Assign parent
             CreateParentItems();            
         }
 
         private void OnDestroy()
         {
-            SceneView.duringSceneGui -= this.OnScene;
             SceneView.duringSceneGui -= this.OnSceneGUI;
+            SceneView.duringSceneGui -= this.OnScene;
         }
 
 
@@ -82,8 +82,25 @@ namespace SLIDDES.LevelEditor.SideScroller3D
 
             //return;
 
+            Handles.BeginGUI();
+            //var controlID = GUIUtility.GetControlID(FocusType.Passive);
+            int controlID = GUIUtility.GetControlID(FocusType.Passive);
+            HandleUtility.AddDefaultControl(controlID);
+            EventType currentEventType = Event.current.GetTypeForControl(controlID);
+            // Do your drawing here using GUI.
+            if(inUse)
+            {
+                if(GUI.Button(new Rect(10, 10, 120, 20), "Disable Editor (F6)"))
+                {
+                    inUse = false;
+                    Debug.Log("yo");
+                }
+            }
+            //GUIUtility.hotControl = 0;
+            Handles.EndGUI();
+
             // Get values
-            var controlID = GUIUtility.GetControlID(FocusType.Passive);
+            //var controlID = GUIUtility.GetControlID(FocusType.Passive);
             var eventType = e.GetTypeForControl(controlID);
 
             // Left mouse button
@@ -123,17 +140,22 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         private void OnSceneGUI(SceneView sceneView)
         {
             // Do your drawing here using Handles.
-            Handles.BeginGUI();
-            // Do your drawing here using GUI.
-            if(inUse)
-            {
-                if(GUI.Button(new Rect(10, 10, 120, 20), "Disable Editor (F6)"))
-                {
-                    inUse = false;
-                }
-            }           
-
-            Handles.EndGUI();
+            //Handles.BeginGUI();
+            ////var controlID = GUIUtility.GetControlID(FocusType.Passive);
+            //int controlID = GUIUtility.GetControlID(FocusType.Passive);
+            //HandleUtility.AddDefaultControl(controlID);
+            //EventType currentEventType = Event.current.GetTypeForControl(controlID);
+            //// Do your drawing here using GUI.
+            //if(inUse)
+            //{
+            //    if(GUI.Button(new Rect(10, 10, 120, 20), "Disable Editor (F6)"))
+            //    {
+            //        inUse = false;
+            //        Debug.Log("yo");
+            //    }
+            //}
+            ////GUIUtility.hotControl = 0;
+            //Handles.EndGUI();
 
             // Key triggers
             Event e = Event.current;
@@ -262,9 +284,8 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                 // Check if hit is in same current layer
                 if(hit.transform.parent != null && hit.transform.parent.name == mousePositionScene.z.ToString())
                 {
-                    DestroyImmediate(hit.transform.gameObject);
+                    Undo.DestroyObjectImmediate(hit.transform.gameObject);
                 }
-
             }
         }
 
