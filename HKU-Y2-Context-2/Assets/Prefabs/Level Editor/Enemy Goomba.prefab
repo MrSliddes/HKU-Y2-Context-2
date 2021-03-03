@@ -110,7 +110,7 @@ MonoBehaviour:
   health: 3
   damage: 1
   movementSpeed: 1
-  idleTime: 3
+  idleTime: 0.1
   patrolAxis: 0
   patrolPointA: {x: -4, y: 0, z: 0}
   patrolPointB: {x: 4, y: 0, z: 0}
