@@ -43,16 +43,18 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         /// </summary>
         private Vector2 editorScrollPosition;
         private bool editorFoldoutTool = true;
-        private bool editorFoldoutAssets;
+        private bool editorFoldoutAssets = true;
+        private bool editorFoldoutSettings;
         private bool showAllZLayers;
         private int searchbarResultAmount;
         private int currentAssetViewIndex;
 
         private int zLayerIndex;
-        private string toolbar_0_fileDirectory;
+        private string assetsFileDirectory;
+        private readonly string assetFileDirectoryDefault = "Assets/Prefabs/Level Editor";
 
 
-        [MenuItem("Window/SLIDDES/Level Editor/Side Scroller 3D", false, 1)]
+        [MenuItem("Window/SLIDDES/Level Editor/Side Scroller 3D", false)]
         public static void ShowWindow()
         {
             //Show existing window instance. If one doesn't exist, make one.
@@ -64,7 +66,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
         {
             inUse = true;
             // Load values
-            toolbar_0_fileDirectory = EditorPrefs.GetString("toolbar_0_fileDirectory", "Assets/Prefabs/Level Editor");
+            assetsFileDirectory = EditorPrefs.GetString("toolbar_0_fileDirectory", assetFileDirectoryDefault);
         }
 
         #region OnEnable, OnDestroy, OnFocus
@@ -210,9 +212,9 @@ namespace SLIDDES.LevelEditor.SideScroller3D
             if(editorFoldoutAssets)
             {
                 // Get asset GUIDs from folder with type GameObject
-                if(toolbar_0_fileDirectory != null) // Prevent wierd bug
+                if(assetsFileDirectory != null) // Prevent wierd bug
                 {
-                    string[] folderContent = AssetDatabase.FindAssets("t:GameObject", new[] { toolbar_0_fileDirectory });
+                    string[] folderContent = AssetDatabase.FindAssets("t:GameObject", new[] { assetsFileDirectory });
 
                     EditorGUILayout.BeginHorizontal();
                     // Searchbar
@@ -243,6 +245,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                             // Display as grid
                             int maxRowAmount = Mathf.Clamp(Mathf.FloorToInt(Screen.width / editorAssetDisplaySize.x) - 2, 1, 99);
                             int closer = maxRowAmount;
+                            bool closedLayout = true;
                             // Get prefabs
                             for(int i = 0; i < folderContent.Length; i++)
                             {
@@ -250,6 +253,7 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                                 if(i % maxRowAmount == 0)
                                 {
                                     EditorGUILayout.BeginHorizontal();
+                                    closedLayout = false;
                                 }
                                 prefabs[i] = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(folderContent[i]), typeof(GameObject)) as GameObject;
                                 CreateItemButton(prefabs[i]);
@@ -257,8 +261,10 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                                 {
                                     EditorGUILayout.EndHorizontal();
                                     closer = maxRowAmount;
+                                    closedLayout = true;
                                 }
                             }
+                            if(!closedLayout) EditorGUILayout.EndHorizontal();
                             break;
                         case 1:
                             // Display vertically
@@ -275,6 +281,29 @@ namespace SLIDDES.LevelEditor.SideScroller3D
                     EditorGUILayout.EndVertical();
                 }
             }
+            EditorGUILayout.EndVertical();
+            #endregion
+
+            #region Settings
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorStyles.foldout.fontStyle = FontStyle.Bold;
+            editorFoldoutSettings = EditorGUILayout.Foldout(editorFoldoutSettings, " Settings", true);
+
+            if(editorFoldoutSettings)
+            {
+                // File directory
+                EditorGUILayout.BeginHorizontal();
+                EditorGUIUtility.labelWidth = 80;
+                assetsFileDirectory = EditorGUILayout.DelayedTextField("Asset Folder", assetsFileDirectory);
+                if(string.IsNullOrEmpty(assetsFileDirectory) || string.IsNullOrWhiteSpace(assetsFileDirectory)) assetsFileDirectory = assetFileDirectoryDefault;
+                if(GUILayout.Button("Reset", GUILayout.Width(45)))
+                {
+                    assetsFileDirectory = assetFileDirectoryDefault;
+                    Repaint();
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+
             EditorGUILayout.EndVertical();
             #endregion
 
