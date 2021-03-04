@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.sliddes.screenshot": "https://github.com/MrSliddes/SLIDDES-Unity-ScreenShot.git",
+    "com.sliddes.ss3d": "file:C:/Users/Mitchell/Downloads/SLIDDES-Unity-SS3D-main/SLIDDES-Unity-SS3D-main",
     "com.unity.2d.tilemap": "1.0.0",
     "com.unity.collab-proxy": "1.3.9",
     "com.unity.ide.rider": "1.2.1",
