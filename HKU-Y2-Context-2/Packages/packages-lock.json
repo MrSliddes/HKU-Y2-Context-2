@@ -1,11 +1,18 @@
 {
   "dependencies": {
+    "com.sliddes.screenshot": {
+      "version": "https://github.com/MrSliddes/SLIDDES-Unity-ScreenShot.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "673dabdf9a75324670e8a78883dce4f658210840"
+    },
     "com.sliddes.ss3d": {
       "version": "https://github.com/MrSliddes/SLIDDES-Unity-SS3D.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "ec78b546aae19bd9146f0c9458ffcf706deadf96"
+      "hash": "e98ac39ba07c66befe3b624956136c3894493533"
     },
     "com.unity.2d.tilemap": {
       "version": "1.0.0",

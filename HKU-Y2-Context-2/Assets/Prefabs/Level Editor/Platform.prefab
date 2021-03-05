@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3599552176279604208}
   - component: {fileID: 1413899887258320382}
+  - component: {fileID: 8298296}
+  - component: {fileID: 8298295}
   m_Layer: 0
   m_Name: Platform
   m_TagString: Untagged
@@ -45,6 +47,33 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 0.2791841, z: 1}
   m_Center: {x: 0, y: 0.36040795, z: 0}
+--- !u!65 &8298296
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4514721650483273156}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.2791841, z: 1}
+  m_Center: {x: 0, y: 1.27, z: 0}
+--- !u!114 &8298295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4514721650483273156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 393720c4afce47946970879b395fa2fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  platformTriggerCollider: {fileID: 8298296}
+  platformCollider: {fileID: 1413899887258320382}
 --- !u!1001 &382527304248249833
 PrefabInstance:
   m_ObjectHideFlags: 0
