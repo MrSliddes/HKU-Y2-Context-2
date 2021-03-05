@@ -531,7 +531,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 3
-  movementSpeed: 5
+  movementSpeed: 7
   jumpForce: 15
   jumpVelTillGravity: 8
   gravityForce: 1

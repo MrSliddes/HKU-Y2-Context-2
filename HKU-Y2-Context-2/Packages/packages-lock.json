@@ -1,11 +1,10 @@
 {
   "dependencies": {
-    "com.sliddes.screenshot": {
-      "version": "https://github.com/MrSliddes/SLIDDES-Unity-ScreenShot.git",
+    "com.sliddes.ss3d": {
+      "version": "file:C:/Users/Mitchell/Downloads/SLIDDES-Unity-SS3D-main/SLIDDES-Unity-SS3D-main",
       "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "673dabdf9a75324670e8a78883dce4f658210840"
+      "source": "local",
+      "dependencies": {}
     },
     "com.sliddes.ss3d": {
       "version": "https://github.com/MrSliddes/SLIDDES-Unity-SS3D.git",
