@@ -1,12 +1,6 @@
 {
   "dependencies": {
     "com.sliddes.ss3d": {
-      "version": "file:C:/Users/Mitchell/Downloads/SLIDDES-Unity-SS3D-main/SLIDDES-Unity-SS3D-main",
-      "depth": 0,
-      "source": "local",
-      "dependencies": {}
-    },
-    "com.sliddes.ss3d": {
       "version": "https://github.com/MrSliddes/SLIDDES-Unity-SS3D.git",
       "depth": 0,
       "source": "git",
