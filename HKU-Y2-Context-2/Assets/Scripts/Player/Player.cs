@@ -6,15 +6,47 @@ using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour
 {
     public float health = 3;
-    public float movementSpeed = 5f;
+    [Header("Movement")]
+    public float movementSpeed = 7f;
+    /// <summary>
+    /// Multiplier while walking on ground
+    /// </summary>
+    public float movementMultiplier = 10f;
+    /// <summary>
+    /// Reduces movementspeed while in air
+    /// </summary>
+    public float airMultiplier = 0.3f;
+    /// <summary>
+    /// Drag rb receives while isGrounded
+    /// </summary>
+    public float rbGroundDrag = 6;
+    /// <summary>
+    /// Drag rb receives while !isGrounded
+    /// </summary>
+    public float rbAirDrag = 2;
+    
+    [Header("Jumping")]
+    /// <summary>
+    /// The force used to jump
+    /// </summary>
+    public float jumpForce = 15;
+    /// <summary>
+    /// The gravity force being applied when not grounded
+    /// </summary>
+    public float gravityForce = 18;
+    public LayerMask layerMaskGround;
 
-    public float jumpForce;
-    public float jumpVelTillGravity = 8;
-    public float gravityForce = 1;
-    public float maxGravityVelocity = -20;
-
+    [Header("Other")]
+    /// <summary>
+    /// How long the player stays invincible after getting hit
+    /// </summary>
     public float invincibleTime = 3f;
     public PlayerState playerState;
+
+    /// <summary>
+    /// The nockback applied to player when getting hit
+    /// </summary>
+    public Vector3 nockbackForce = new Vector3(5f, 3f, 0f);
 
     [Header("Required Components")]
     public SpriteRenderer spriteRenderer;
@@ -25,9 +57,7 @@ public class Player : MonoBehaviour
     public GameObject prefabWeaponStickDamage;
     public GameObject laserModelPivot;
 
-    private bool isInvincible;
     [HideInInspector] public Rigidbody rb;
-    private CapsuleCollider capsuleCollider;
 
     /// <summary>
     /// Current input of player
@@ -39,8 +69,11 @@ public class Player : MonoBehaviour
     private Vector3 inputDirection;
 
     private bool addGravityForce;
+    private bool canMove;
     private bool cameOffGround;
     private bool hasEnterdNewPlayerState = false;
+    private bool isGrounded;
+    private bool isInvincible;
     private int currentWeapon = 0;
 
     // Start is called before the first frame update
@@ -48,7 +81,6 @@ public class Player : MonoBehaviour
     {
         // Get
         rb = GetComponent<Rigidbody>();
-        capsuleCollider = GetComponent<CapsuleCollider>();
 
         // Set
         laserModelPivot.SetActive(false);
@@ -57,26 +89,41 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, 0.9f, 0), 0.1f, layerMaskGround);
+
         PlayerInput();
         UpdatePlayerState();
 
         UseWeapon();
-
-        inputDirection = new Vector3(input.x * movementSpeed, rb.velocity.y, rb.velocity.z);
+                
+        ControlDrag();
     }
 
     private void FixedUpdate()
     {
-        // Movement
-        rb.velocity = inputDirection;
-
-        // Gravity
-        if(addGravityForce || !IsGrounded() && playerState != PlayerState.jump)
+        // Movement => https://www.youtube.com/watch?v=E5zNi_SSP_w
+        if(canMove)
         {
-            rb.AddForce(Vector3.down * gravityForce * 1000, ForceMode.Force);
+            if(isGrounded)
+            {
+                rb.AddForce(inputDirection * movementSpeed * movementMultiplier, ForceMode.Acceleration);
+            }
+            else
+            {
+                rb.AddForce(inputDirection * movementSpeed * movementMultiplier * airMultiplier, ForceMode.Acceleration);
+            }
         }
-        // Limit gravity
-        if(rb.velocity.y < maxGravityVelocity) rb.velocity = new Vector3(rb.velocity.x, maxGravityVelocity, rb.velocity.z);
+
+        if(!isGrounded && rb.velocity.y < 0)
+        {
+            // Add gravity when player is falling down
+            rb.AddForce(Vector3.down * gravityForce, ForceMode.Acceleration);
+        }
+        else if(!isGrounded && rb.velocity.y > 0 && !Input.GetKey(KeyCode.Space))
+        {
+            // Add gravity when player is not holding space anymore
+            rb.AddForce(Vector3.down * gravityForce, ForceMode.Acceleration);
+        }
     }
 
     public void EnterNewPlayerState(PlayerState newState)
@@ -89,7 +136,7 @@ public class Player : MonoBehaviour
     /// Triggerd when player receives damage from enemies
     /// </summary>
     /// <param name="damage"></param>
-    public void ReceiveDamage(float damage) // Not triggerd by IDamageable since we dont want the player to kill himself
+    public void ReceiveDamage(float damage, Transform damageDealer) // Not triggerd by IDamageable since we dont want the player to kill himself
     {
         if(isInvincible || playerState == PlayerState.dead) return; // no damage, invis
         health -= damage;
@@ -102,6 +149,18 @@ public class Player : MonoBehaviour
         {
             StopCoroutine(InvisTimeAsync());
             StartCoroutine(InvisTimeAsync());
+        }
+
+        // Based on damageDealer position add knockback
+        if(damageDealer.transform.position.x > transform.position.x)
+        {
+            // Nock left
+            rb.AddForce(Vector3.left * nockbackForce.x + Vector3.up * nockbackForce.y, ForceMode.VelocityChange);
+        }
+        else
+        {
+            // Nock right
+            rb.AddForce(Vector3.right * nockbackForce.x + Vector3.up * nockbackForce.y, ForceMode.VelocityChange);
         }
     }
 
@@ -125,6 +184,18 @@ public class Player : MonoBehaviour
         yield break;
     }
 
+    private void ControlDrag()
+    {
+        if(isGrounded)
+        {
+            rb.drag = rbGroundDrag;
+        }
+        else
+        {
+            rb.drag = rbAirDrag;
+        }
+    }
+
     private void UpdatePlayerState()
     {
         switch(playerState)
@@ -134,47 +205,63 @@ public class Player : MonoBehaviour
                 if(!hasEnterdNewPlayerState)
                 {
                     hasEnterdNewPlayerState = true;
+                    canMove = true;
                 }
 
                 // Update
 
                 // Exit
-                if(Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+                if(Input.GetKey(KeyCode.Space) && isGrounded)
                 {
                     // Goto jump
                     EnterNewPlayerState(PlayerState.jump);
                 }
-
+                else if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+                {
+                    // Goto walking
+                    EnterNewPlayerState(PlayerState.walking);
+                }
                 break;
             case PlayerState.walking:
                 // Enter
                 if(!hasEnterdNewPlayerState)
                 {
                     hasEnterdNewPlayerState = true;
+                    canMove = true;
                 }
 
                 // Update
+                PlayerInput();
 
                 // Exit
-
+                if(!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
+                {
+                    // Goto idle
+                    EnterNewPlayerState(PlayerState.idle);
+                }
+                else if(Input.GetKey(KeyCode.Space) && isGrounded)
+                {
+                    // Goto jump
+                    EnterNewPlayerState(PlayerState.jump);
+                }
                 break;
             case PlayerState.jump:
                 // Enter
                 if(!hasEnterdNewPlayerState)
                 {
                     hasEnterdNewPlayerState = true;
-                    rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+                    rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
                     cameOffGround = false;
                     addGravityForce = false;
+                    canMove = true;
                 }
 
                 // Update
-                if(!IsGrounded()) cameOffGround = true;
-                // Check for negative velocity, that means the player is coming down
-                addGravityForce = rb.velocity.y < jumpVelTillGravity;
+                // Fall down
+                if(!isGrounded) cameOffGround = true;
 
                 // Exit
-                if(cameOffGround && IsGrounded())
+                if(cameOffGround && isGrounded)
                 {
                     addGravityForce = false;
                     EnterNewPlayerState(PlayerState.idle);
@@ -215,18 +302,12 @@ public class Player : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Is the player on ground
-    /// </summary>
-    /// <returns></returns>
-    private bool IsGrounded()
-    {
-        return Physics.Raycast(transform.position, Vector3.down, capsuleCollider.bounds.extents.y + 0.01f);
-    }
+    
 
     private void PlayerInput()
     {
         input.x = Input.GetAxisRaw("Horizontal");
+        inputDirection = new Vector3(input.x, 0, 0);
         FlipSprite();        
     }
 
@@ -266,6 +347,12 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         laserModelPivot.SetActive(false);
         yield break;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position - new Vector3(0, 0.9f, 0), 0.1f);
     }
 }
 public enum PlayerState

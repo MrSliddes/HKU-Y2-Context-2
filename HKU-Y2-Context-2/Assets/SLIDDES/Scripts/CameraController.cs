@@ -47,7 +47,7 @@ namespace SLIDDES.Controllers
 
         }
 
-        private void FixedUpdate()
+        private void LateUpdate()
         {
             FollowTarget();
         }

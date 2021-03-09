@@ -45,7 +45,7 @@ public class Enemy : MonoBehaviour, IDamageable
     public virtual void ContactWithPlayer(Collision collision)
     {
         // Deal damage to player (and give knockback?)
-        collision.transform.GetComponent<Player>().ReceiveDamage(damage);
+        collision.transform.GetComponent<Player>().ReceiveDamage(damage, transform);
     }
 
     private void EnterNewEnemyState(EnemyState newState)

@@ -206,10 +206,11 @@ MonoBehaviour:
   health: 10
   damage: 1
   attackRange: 5
-  attackSpeed: 0.5
+  attackSpeed: 2
   projectileForce: 100
   prefabProjectile: {fileID: 1180236045227454487, guid: 3ad34da6ec58552418602fae9fcc92d4, type: 3}
   projectileOrigin: {fileID: 3698626040360650658}
+  spriteRenderer: {fileID: 3698626039944464481}
 --- !u!54 &3382777603390702907
 Rigidbody:
   m_ObjectHideFlags: 0
