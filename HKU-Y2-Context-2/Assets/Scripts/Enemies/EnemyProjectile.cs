@@ -18,7 +18,7 @@ public class EnemyProjectile : MonoBehaviour
     {
         if(other.transform.GetComponent<Player>() != null)
         {
-            other.transform.GetComponent<Player>().ReceiveDamage(damage);
+            other.transform.GetComponent<Player>().ReceiveDamage(damage, transform);
             Destroy(gameObject);
         }
         else if(other.transform.GetComponent<IDamageable>() != null && canHurtEnemies)
