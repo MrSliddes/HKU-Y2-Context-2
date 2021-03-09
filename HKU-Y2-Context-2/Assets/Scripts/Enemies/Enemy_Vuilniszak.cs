@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Enemy_Vuilniszak : MonoBehaviour, IDamageable
 {
-    public float health = 1;
+    public float health = 3;
     public float damage = 1;
+
+    public SpriteRenderer spriteRenderer;
 
     // Start is called before the first frame update
     void Start()
@@ -31,5 +33,17 @@ public class Enemy_Vuilniszak : MonoBehaviour, IDamageable
     {
         health -= amount;
         if(health <= 0) Destroy(gameObject);
+        StartCoroutine(DisplayHitAsync());
+    }
+
+    private IEnumerator DisplayHitAsync()
+    {
+        // Sprite flikker
+        Color f = Color.red;
+        Color c = spriteRenderer.color;
+        spriteRenderer.color = f;
+        yield return new WaitForSeconds(0.15f);
+        spriteRenderer.color = c;
+        yield break;
     }
 }

@@ -7,25 +7,46 @@ public class Player : MonoBehaviour
 {
     public float health = 3;
     [Header("Movement")]
-    public float movementSpeed = 5f;
+    public float movementSpeed = 7f;
+    /// <summary>
+    /// Multiplier while walking on ground
+    /// </summary>
     public float movementMultiplier = 10f;
     /// <summary>
     /// Reduces movementspeed while in air
     /// </summary>
-    public float airMultiplier = 0.4f;
+    public float airMultiplier = 0.3f;
+    /// <summary>
+    /// Drag rb receives while isGrounded
+    /// </summary>
     public float rbGroundDrag = 6;
+    /// <summary>
+    /// Drag rb receives while !isGrounded
+    /// </summary>
     public float rbAirDrag = 2;
     
     [Header("Jumping")]
-    public float jumpForce = 5;
-    public float gravityForce = 1;
+    /// <summary>
+    /// The force used to jump
+    /// </summary>
+    public float jumpForce = 15;
+    /// <summary>
+    /// The gravity force being applied when not grounded
+    /// </summary>
+    public float gravityForce = 18;
     public LayerMask layerMaskGround;
 
     [Header("Other")]
+    /// <summary>
+    /// How long the player stays invincible after getting hit
+    /// </summary>
     public float invincibleTime = 3f;
     public PlayerState playerState;
 
-    public Vector3 nockbackForce = new Vector3(1f, 1f, 0f);
+    /// <summary>
+    /// The nockback applied to player when getting hit
+    /// </summary>
+    public Vector3 nockbackForce = new Vector3(5f, 3f, 0f);
 
     [Header("Required Components")]
     public SpriteRenderer spriteRenderer;
@@ -36,9 +57,7 @@ public class Player : MonoBehaviour
     public GameObject prefabWeaponStickDamage;
     public GameObject laserModelPivot;
 
-    private bool isInvincible;
     [HideInInspector] public Rigidbody rb;
-    private CapsuleCollider capsuleCollider;
 
     /// <summary>
     /// Current input of player
@@ -54,6 +73,7 @@ public class Player : MonoBehaviour
     private bool cameOffGround;
     private bool hasEnterdNewPlayerState = false;
     private bool isGrounded;
+    private bool isInvincible;
     private int currentWeapon = 0;
 
     // Start is called before the first frame update
@@ -61,7 +81,6 @@ public class Player : MonoBehaviour
     {
         // Get
         rb = GetComponent<Rigidbody>();
-        capsuleCollider = GetComponent<CapsuleCollider>();
 
         // Set
         laserModelPivot.SetActive(false);
@@ -105,13 +124,6 @@ public class Player : MonoBehaviour
             // Add gravity when player is not holding space anymore
             rb.AddForce(Vector3.down * gravityForce, ForceMode.Acceleration);
         }
-        //// Gravity
-        //if(addGravityForce || !IsGrounded() && playerState != PlayerState.jump)
-        //{
-        //    rb.AddForce(Vector3.down * gravityForce * 1000, ForceMode.Force);
-        //}
-        //// Limit gravity
-        //if(rb.velocity.y < maxGravityVelocity) rb.velocity = new Vector3(rb.velocity.x, maxGravityVelocity, rb.velocity.z);
     }
 
     public void EnterNewPlayerState(PlayerState newState)
