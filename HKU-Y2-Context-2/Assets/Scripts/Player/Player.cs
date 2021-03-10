@@ -91,7 +91,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, 0.9f, 0), 0.1f, layerMaskGround);
+        isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, 0.9f, 0), 0.1f, layerMaskGround, QueryTriggerInteraction.Ignore); // Somehow works with trigger?
 
         PlayerInput();
         UpdatePlayerState();
