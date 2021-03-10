@@ -46,4 +46,5 @@ public class Enemy_Vuilniszak : MonoBehaviour, IDamageable
         spriteRenderer.color = c;
         yield break;
     }
+
 }

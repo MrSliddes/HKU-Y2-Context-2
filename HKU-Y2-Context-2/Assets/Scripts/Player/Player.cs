@@ -52,6 +52,8 @@ public class Player : MonoBehaviour
     public SpriteRenderer spriteRenderer;
 
     [Header("Weapon")]
+    public bool hasWeaponStick;
+    public bool hasWeaponLaser;
     public GameObject weaponPivot;
     public Animator weaponStickAnimator;
     public GameObject prefabWeaponStickDamage;
@@ -272,8 +274,8 @@ public class Player : MonoBehaviour
                 if(!hasEnterdNewPlayerState)
                 {
                     hasEnterdNewPlayerState = true;
-                    // Restart level
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                    // Show game over screen
+                    PlayerUI.ShowGameOverScreen();
                 }
 
                 // Update
@@ -320,12 +322,14 @@ public class Player : MonoBehaviour
             {
                 case 0:
                     // Stick
+                    if(!hasWeaponStick) return;
                     // prob should check if animation is done playing
                     weaponStickAnimator.Play("Anim_Player_Weapon_Stick_Swing");
                     Instantiate(prefabWeaponStickDamage, weaponPivot.transform.position, weaponPivot.transform.rotation);
                     break;
                 case 1:
                     // Laser
+                    if(!hasWeaponLaser) return;
                     RaycastHit hit;
                     if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.right), out hit, Mathf.Infinity))
                     {

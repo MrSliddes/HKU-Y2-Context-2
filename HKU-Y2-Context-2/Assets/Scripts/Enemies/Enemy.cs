@@ -22,7 +22,7 @@ public class Enemy : MonoBehaviour, IDamageable
     private CapsuleCollider capsuleCollider;
 
     // Start is called before the first frame update
-    void Start()
+    public virtual void Start()
     {
         // Get
         capsuleCollider = GetComponent<CapsuleCollider>();
@@ -48,7 +48,12 @@ public class Enemy : MonoBehaviour, IDamageable
         collision.transform.GetComponent<Player>().ReceiveDamage(damage, transform);
     }
 
-    private void EnterNewEnemyState(EnemyState newState)
+    public virtual void ContactWithEnemy(Collision collision)
+    {
+
+    }
+
+    public virtual void EnterNewEnemyState(EnemyState newState)
     {
         enemyState = newState;
         hasEnterdNewState = false;
@@ -230,12 +235,28 @@ public class Enemy : MonoBehaviour, IDamageable
         }
     }
 
-    public void ReceiveDamage(float damage)
+    #region Damage Receiving
+
+    public virtual void ReceiveDamage(float damage)
     {
         health -= damage;
         if(health <= 0) EnterNewEnemyState(EnemyState.dead);
-        else EnterNewEnemyState(EnemyState.chasing);
+        StopCoroutine(DisplayHitAsync());
+        StartCoroutine(DisplayHitAsync());
     }
+
+    public virtual IEnumerator DisplayHitAsync()
+    {
+        // Sprite flikker
+        Color f = Color.red;
+        Color c = spriteRenderer.color;
+        spriteRenderer.color = f;
+        yield return new WaitForSeconds(0.15f);
+        spriteRenderer.color = c;
+        yield break;
+    }
+
+    #endregion
 
     #region Raycasts
 
@@ -258,11 +279,26 @@ public class Enemy : MonoBehaviour, IDamageable
 
     
 
-    private void OnCollisionEnter(Collision collision)
+    public virtual void OnCollisionEnter(Collision collision)
     {
-        if(collision.transform.CompareTag("Player")) ContactWithPlayer(collision);
+        if(collision.transform.CompareTag("Player"))
+        {
+            ContactWithPlayer(collision);
+        }
+        else if(collision.transform.GetComponent<Enemy>() != null)
+        {
+            ContactWithEnemy(collision);
+        }
     }
 
+
+    public virtual void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.blue;
+
+        if(!Application.isPlaying) orginPosition = transform.position;
+        Gizmos.DrawLine(orginPosition + patrolPointA, orginPosition + patrolPointB);
+    }
 
     public enum EnemyState
     { 

@@ -112,4 +112,11 @@ public class Enemy_GarbageCan : MonoBehaviour, IDamageable
         result.y = Vy;
         return result;
     }
+
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
 }
