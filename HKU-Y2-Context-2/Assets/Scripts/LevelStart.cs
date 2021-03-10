@@ -18,7 +18,10 @@ public class LevelStart : MonoBehaviour
         }
         else
         {
+            // Set player pos
             FindObjectOfType<Player>().transform.position = transform.position;
+            // Play animation
+            PlayerUI.LevelTransitionOpening();
             Destroy(gameObject);
         }    
     }

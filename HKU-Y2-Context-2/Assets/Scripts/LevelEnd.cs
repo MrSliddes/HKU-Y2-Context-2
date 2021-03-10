@@ -9,6 +9,8 @@ public class LevelEnd : MonoBehaviour
 
     public GameObject[] objectsToHideOnStart;
 
+    private bool isLoading;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,7 +30,20 @@ public class LevelEnd : MonoBehaviour
     {
         if(collision.transform.CompareTag("Player"))
         {
-            SceneManager.LoadScene(sceneToLoad);
+            if(!isLoading)
+            {
+                StartCoroutine(LoadNextScene());
+            }
         }
+    }
+
+    private IEnumerator LoadNextScene()
+    {
+        isLoading = true;
+
+        PlayerUI.LevelTransitionClose();
+        yield return new WaitForSeconds(2);
+        SceneManager.LoadSceneAsync(sceneToLoad, LoadSceneMode.Single);
+        yield break;
     }
 }
