@@ -9,6 +9,10 @@ public class LevelEnd : MonoBehaviour
 
     public GameObject[] objectsToHideOnStart;
 
+    [Header("Level End Conditions")]
+    public bool hasConditions = false;
+    public GameObject[] objectsThatNeedToBeDestroyed;
+
     private bool isLoading;
 
     // Start is called before the first frame update
@@ -30,9 +34,14 @@ public class LevelEnd : MonoBehaviour
     {
         if(collision.transform.CompareTag("Player"))
         {
-            if(!isLoading)
+            Debug.Log("Col exit");
+            if(!isLoading && CompletedConditions())
             {
                 StartCoroutine(LoadNextScene());
+            }
+            else
+            {
+                Debug.Log("Not completed!");
             }
         }
     }
@@ -45,5 +54,17 @@ public class LevelEnd : MonoBehaviour
         yield return new WaitForSeconds(2);
         SceneManager.LoadSceneAsync(sceneToLoad, LoadSceneMode.Single);
         yield break;
+    }
+
+    private bool CompletedConditions()
+    {
+        if(!hasConditions) return true;
+
+        foreach(GameObject item in objectsThatNeedToBeDestroyed)
+        {
+            if(item != null) return false;
+        }
+
+        return true;
     }
 }
