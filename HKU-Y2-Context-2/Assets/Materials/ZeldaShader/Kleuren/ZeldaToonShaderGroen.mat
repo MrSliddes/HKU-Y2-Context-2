@@ -30,7 +30,7 @@ Material:
     - _MAIN_LIGHT_SHADOWS_CASCADE: 1
     - _SHADOWS_SOFT: 1
     m_Colors:
-    - Color_116725BF: {r: 0.47476014, g: 0.9056604, b: 0.32039872, a: 0}
+    - Color_116725BF: {r: 0.27066523, g: 0.3962264, b: 0.22614808, a: 0}
     - Color_6512CD7A: {r: 0.5660378, g: 0.5660378, b: 0.5660378, a: 0}
     - Color_85BA657: {r: 1, g: 1, b: 1, a: 0}
     - Color_F25F2FC1: {r: 1, g: 1, b: 1, a: 0}

@@ -39,4 +39,5 @@ public class JumpTrough3DPlatform : MonoBehaviour
     {
         platformCollider.enabled = false;
     }
+
 }

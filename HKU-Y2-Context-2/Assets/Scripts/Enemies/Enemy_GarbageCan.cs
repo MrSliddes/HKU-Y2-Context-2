@@ -12,6 +12,7 @@ public class Enemy_GarbageCan : MonoBehaviour, IDamageable
 
     public GameObject prefabProjectile;
     public Transform projectileOrigin;
+    public SpriteRenderer spriteRenderer;
 
     private float attackSpeedTimer;
     private bool playerEnterdRange = false;
@@ -48,8 +49,11 @@ public class Enemy_GarbageCan : MonoBehaviour, IDamageable
             {
                 // Shoot
                 GameObject a = Instantiate(prefabProjectile, projectileOrigin.position, Quaternion.identity);
-                Vector3 rot = Vector3.RotateTowards(projectileOrigin.position, player.position, 999, 0.0f);
-                a.GetComponent<Rigidbody>().AddRelativeForce(rot * projectileForce);
+
+                // Calc angle 
+                Vector3 vel = CalculateVelocity(player.position, projectileOrigin.position, 1f);
+
+                a.GetComponent<Rigidbody>().velocity = vel;
                 attackSpeedTimer = attackSpeed;
             }
         }
@@ -65,7 +69,20 @@ public class Enemy_GarbageCan : MonoBehaviour, IDamageable
         if(health <= 0)
         {
             Destroy(gameObject);
-        }        
+        }
+
+        StartCoroutine(DisplayHitAsync());
+    }
+
+    private IEnumerator DisplayHitAsync()
+    {
+        // Sprite flikker
+        Color f = Color.red;
+        Color c = spriteRenderer.color;
+        spriteRenderer.color = f;
+        yield return new WaitForSeconds(0.15f);
+        spriteRenderer.color = c;
+        yield break;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -74,7 +91,32 @@ public class Enemy_GarbageCan : MonoBehaviour, IDamageable
         if(ep != null && ep.canHurtEnemies)
         {
             // 1 hit
-            Destroy(gameObject);
+            //Destroy(gameObject);
         }
+    }
+
+    private Vector3 CalculateVelocity(Vector3 target, Vector3 orgin, float time)
+    {
+        Vector3 distance = target - orgin;
+        Vector3 distanceXz = distance;
+        distanceXz.y = 0;
+
+        float sY = distance.y;
+        float sXz = distanceXz.magnitude;
+
+        float Vxz = sXz * time;
+        float Vy = (sY / time) + (0.5f * Mathf.Abs(Physics.gravity.y) * time);
+
+        Vector3 result = distanceXz.normalized;
+        result *= Vxz;
+        result.y = Vy;
+        return result;
+    }
+
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }
