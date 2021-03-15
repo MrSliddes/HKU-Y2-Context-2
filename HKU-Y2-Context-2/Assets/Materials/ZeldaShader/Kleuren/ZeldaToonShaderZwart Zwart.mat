@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ZeldaToonShaderZwart
+  m_Name: ZeldaToonShaderZwart Zwart
   m_Shader: {fileID: -6465566751694194690, guid: 681bf25b570388346918e598ca1687a1, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -34,8 +34,8 @@ Material:
     - _MAIN_LIGHT_SHADOWS_CASCADE: 1
     - _SHADOWS_SOFT: 1
     m_Colors:
-    - Color_116725BF: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 0}
+    - Color_116725BF: {r: 0, g: 0, b: 0, a: 0}
     - Color_6512CD7A: {r: 0.3679245, g: 0.3679245, b: 0.3679245, a: 0}
-    - Color_85BA657: {r: 0, g: 0, b: 0, a: 0}
+    - Color_85BA657: {r: 1, g: 1, b: 1, a: 0}
     - Color_F25F2FC1: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
