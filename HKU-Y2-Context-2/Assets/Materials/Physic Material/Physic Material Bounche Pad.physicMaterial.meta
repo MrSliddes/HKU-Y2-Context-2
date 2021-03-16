@@ -1,9 +1,8 @@
 fileFormatVersion: 2
-guid: 4033baa87fe981b4197315a24a88fcb6
-labels:
-- SS3D-Asset
-PrefabImporter:
+guid: 1609d88fc27e8dd4aa2b147fbb489a97
+NativeFormatImporter:
   externalObjects: {}
+  mainObjectFileID: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

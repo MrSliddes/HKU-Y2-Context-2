@@ -208,6 +208,8 @@ public class Player : MonoBehaviour
                 {
                     hasEnterdNewPlayerState = true;
                     canMove = true;
+                    // Stop sliding
+                    if(input.x == 0) rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
                 }
 
                 // Update
