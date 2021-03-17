@@ -43,6 +43,7 @@ public class PlaneSpawner : MonoBehaviour
             fireRateTimer = fireRate;
             Vector3 pos; if(shootRight) pos = bulletPosRight.position; else pos = bulletPosLeft.position;
             GameObject a = Instantiate(prefabPlane, pos, Quaternion.identity);
+            a.GetComponent<Enemy_Plane>().moveRight = shootRight;
         }
     }
 }
