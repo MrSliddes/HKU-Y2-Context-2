@@ -238,16 +238,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a55ab7f9a810b3944b8ac7fd5800e698, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: Weiland
+  sceneToLoad: Woestijn
   objectsToHideOnStart:
   - {fileID: 3098559921646440099}
   - {fileID: 3098559920183207861}
   - {fileID: 3098559921434140023}
-  hasConditions: 1
-  objectsThatNeedToBeDestroyed:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  hasConditions: 0
+  objectsThatNeedToBeDestroyed: []
 --- !u!65 &3098559921512004602
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -33,7 +33,7 @@ public class Enemy : MonoBehaviour, IDamageable
     }
 
     // Update is called once per frame
-    void Update()
+    public virtual void Update()
     {
         UpdateEnemyState();
     }

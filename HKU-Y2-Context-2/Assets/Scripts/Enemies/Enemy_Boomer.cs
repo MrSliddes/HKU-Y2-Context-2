@@ -10,6 +10,8 @@ public class Enemy_Boomer : Enemy
 
     public GameObject prefabAttack;
     public GameObject boomerUI;
+    public Animator animator;
+    public Transform animatorObject;
 
     private float attackSpeedTimer;
     private Transform player;
@@ -25,6 +27,7 @@ public class Enemy_Boomer : Enemy
     public override void EnemyStateIdle()
     {
         base.EnemyStateIdle();
+        animator.Play("Boomer1_Idle");
 
         // Exit
         if(Vector3.Distance(transform.position, player.position) <= agroRange)
@@ -37,10 +40,25 @@ public class Enemy_Boomer : Enemy
     {
         base.EnemyStatePatrolling();
 
+        animator.Play("Boomer1_Walk");
+
         // Exit if player in range
         if(Vector3.Distance(transform.position, player.position) <= agroRange)
         {
             EnterNewEnemyState(EnemyState.attacking);
+            animator.Play("Boomer1_Idle");
+        }
+
+        // flip
+        if(!spriteRenderer.flipX)
+        {
+            // Left
+            animatorObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+        }
+        else
+        {
+            // Right
+            animatorObject.transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
         }
     }
 
@@ -80,11 +98,13 @@ public class Enemy_Boomer : Enemy
         {
             // Right
             spriteRenderer.flipX = false;
+            animatorObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
         }
         else
         {
             // Left
             spriteRenderer.flipX = true;
+            animatorObject.transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
         }
 
         // Exit
@@ -120,11 +140,15 @@ public class Enemy_Boomer : Enemy
     public void BoomerAwnserGood()
     {
         Debug.Log("Good");
+        transform.position = new Vector3(transform.position.x, transform.position.y, 8);
+        boomerUI.SetActive(false);
     }
 
     public void BoomerAwnserBad()
     {
         Debug.Log("Bad");
+        transform.position = new Vector3(transform.position.x, transform.position.y, 8);
+        boomerUI.SetActive(false);
     }
 
     public override void OnDrawGizmosSelected()

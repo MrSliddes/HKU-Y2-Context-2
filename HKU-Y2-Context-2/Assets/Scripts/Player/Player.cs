@@ -50,6 +50,8 @@ public class Player : MonoBehaviour
 
     [Header("Required Components")]
     public SpriteRenderer spriteRenderer;
+    public Animator animator;
+    public Transform animatorObject;
 
     [Header("Weapon")]
     public bool hasWeaponStick;
@@ -163,7 +165,7 @@ public class Player : MonoBehaviour
         {
             // Nock right
             rb.AddForce(Vector3.right * nockbackForce.x + Vector3.up * nockbackForce.y, ForceMode.VelocityChange);
-        }
+        }        
     }
 
     private IEnumerator InvisTimeAsync()
@@ -210,12 +212,13 @@ public class Player : MonoBehaviour
                     canMove = true;
                     // Stop sliding
                     if(input.x == 0 && isGrounded) rb.velocity = new Vector3(0, rb.velocity.y, rb.velocity.z);
+                    animator.Play("player_idle");
                 }
 
                 // Update
 
                 // Exit
-                if(Input.GetKey(KeyCode.Space) && isGrounded)
+                if(Input.GetKeyDown(KeyCode.Space) && isGrounded)
                 {
                     // Goto jump
                     EnterNewPlayerState(PlayerState.jump);
@@ -232,6 +235,7 @@ public class Player : MonoBehaviour
                 {
                     hasEnterdNewPlayerState = true;
                     canMove = true;
+                    animator.Play("player_run");
                 }
 
                 // Update
@@ -243,7 +247,7 @@ public class Player : MonoBehaviour
                     // Goto idle
                     EnterNewPlayerState(PlayerState.idle);
                 }
-                else if(Input.GetKey(KeyCode.Space) && isGrounded)
+                else if(Input.GetKeyDown(KeyCode.Space) && isGrounded)
                 {
                     // Goto jump
                     EnterNewPlayerState(PlayerState.jump);
@@ -258,6 +262,7 @@ public class Player : MonoBehaviour
                     cameOffGround = false;
                     addGravityForce = false;
                     canMove = true;
+                    animator.Play("player_jump");
                 }
 
                 // Update
@@ -276,8 +281,10 @@ public class Player : MonoBehaviour
                 if(!hasEnterdNewPlayerState)
                 {
                     hasEnterdNewPlayerState = true;
+                    animator.Play("player_death");
+                    canMove = false;
                     // Show game over screen
-                    PlayerUI.ShowGameOverScreen();
+                    Invoke("GameOver", 1);
                 }
 
                 // Update
@@ -289,6 +296,11 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void GameOver()
+    {
+        PlayerUI.ShowGameOverScreen();
+    }
+
     private void FlipSprite()
     {
         if(input.x > 0)
@@ -296,6 +308,7 @@ public class Player : MonoBehaviour
             spriteRenderer.flipX = false;
             laserModelPivot.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
             weaponPivot.transform.rotation = Quaternion.Euler(Vector3.zero);
+            animatorObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
         }
         else if(input.x < 0)
@@ -303,6 +316,7 @@ public class Player : MonoBehaviour
             spriteRenderer.flipX = true;
             laserModelPivot.transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
             weaponPivot.transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
+            animatorObject.transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
         }
     }
 
@@ -328,6 +342,7 @@ public class Player : MonoBehaviour
                     // prob should check if animation is done playing
                     weaponStickAnimator.Play("Anim_Player_Weapon_Stick_Swing");
                     Instantiate(prefabWeaponStickDamage, weaponPivot.transform.position, weaponPivot.transform.rotation);
+                    animator.Play("player_hit");
                     break;
                 case 1:
                     // Laser
