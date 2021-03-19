@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: 528fe0cb2bd3d26409bca6941ffd0e25
+labels:
+- SS3D-Asset
 PrefabImporter:
   externalObjects: {}
   userData: 
