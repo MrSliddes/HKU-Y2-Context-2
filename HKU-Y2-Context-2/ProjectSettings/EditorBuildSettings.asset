@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Mitchell/WerkSceneMitchell/School.unity
     guid: effb4667d7991f14593b82e0e20348a9
+  - enabled: 1
+    path: Assets/Scenes/Mitchell/WerkSceneMitchell/Woestijn.unity
+    guid: c68c7299898293649b5ebca20f941e48
   m_configObjects: {}

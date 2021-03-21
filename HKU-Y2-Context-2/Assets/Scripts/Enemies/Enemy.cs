@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour, IDamageable
     public EnemyState enemyState;
     public SpriteRenderer spriteRenderer;
 
-    private bool hasEnterdNewState = false;
+    protected bool hasEnterdNewState = false;
     private bool patrolToLeft;
     private float idleTimer;
     private Vector3 orginPosition;
@@ -33,7 +33,7 @@ public class Enemy : MonoBehaviour, IDamageable
     }
 
     // Update is called once per frame
-    void Update()
+    public virtual void Update()
     {
         UpdateEnemyState();
     }
