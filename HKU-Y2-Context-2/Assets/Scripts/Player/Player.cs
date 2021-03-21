@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
+    public bool allowedToJump = true;
+
     public float health = 3;
     [Header("Movement")]
     public float movementSpeed = 7f;
@@ -235,8 +237,8 @@ public class Player : MonoBehaviour
                 {
                     hasEnterdNewPlayerState = true;
                     canMove = true;
-                    animator.Play("player_run");
                 }
+                animator.Play("player_run");
 
                 // Update
                 PlayerInput();
@@ -258,6 +260,12 @@ public class Player : MonoBehaviour
                 if(!hasEnterdNewPlayerState)
                 {
                     hasEnterdNewPlayerState = true;
+                    if(!allowedToJump)
+                    {
+                        EnterNewPlayerState(PlayerState.idle);
+                        return;
+                    }
+
                     rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
                     cameOffGround = false;
                     addGravityForce = false;

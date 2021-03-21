@@ -22,6 +22,7 @@ public class Enemy_Boomer : Enemy
         base.Start();
         player = GameObject.FindWithTag("Player").transform;
         if(boomerUI != null) boomerUI.SetActive(false);
+        GetComponent<Rigidbody>().mass = 100;
     }
 
     public override void EnemyStateIdle()
@@ -69,30 +70,6 @@ public class Enemy_Boomer : Enemy
         {
             hasEnterdNewState = true;
         }
-        // Update
-        // Shoot blast
-        if(attackSpeedTimer < 0)
-        {
-            // Attack
-            if(player.position.x > transform.position.x)
-            {
-                // Right
-                GameObject a = Instantiate(prefabAttack, transform.position + new Vector3(1.5f, 0.5f, 0), Quaternion.identity);
-                a.GetComponent<Enemy_Plane>().moveRight = true;
-            }
-            else
-            {
-                // Left
-                GameObject a = Instantiate(prefabAttack, transform.position + new Vector3(-1.5f, 0.5f, 0), Quaternion.identity);
-                a.GetComponent<Enemy_Plane>().moveRight = false;
-            }
-
-            attackSpeedTimer = attackSpeed;
-        }
-        else
-        {
-            attackSpeedTimer -= Time.deltaTime;
-        }
         // Lookat player
         if(player.position.x > transform.position.x)
         {
@@ -112,6 +89,33 @@ public class Enemy_Boomer : Enemy
         {
             EnterNewEnemyState(EnemyState.idle);
         }
+
+        return;
+
+        // Update
+        // Shoot blast
+        //if(attackSpeedTimer < 0)
+        //{
+        //    // Attack
+        //    if(player.position.x > transform.position.x)
+        //    {
+        //        // Right
+        //        GameObject a = Instantiate(prefabAttack, transform.position + new Vector3(1.5f, 0.5f, 0), Quaternion.identity);
+        //        a.GetComponent<Enemy_Plane>().moveRight = true;
+        //    }
+        //    else
+        //    {
+        //        // Left
+        //        GameObject a = Instantiate(prefabAttack, transform.position + new Vector3(-1.5f, 0.5f, 0), Quaternion.identity);
+        //        a.GetComponent<Enemy_Plane>().moveRight = false;
+        //    }
+
+        //    attackSpeedTimer = attackSpeed;
+        //}
+        //else
+        //{
+        //    attackSpeedTimer -= Time.deltaTime;
+        //}        
     }
 
     public override void EnemyStateChasing()
@@ -130,11 +134,17 @@ public class Enemy_Boomer : Enemy
         }
     }
 
+    public override void ContactWithPlayer(Collision collision)
+    {
+        //base.ContactWithPlayer(collision);
+        EnterNewEnemyState(EnemyState.chasing);
+    }
+
     public override void ReceiveDamage(float damage)
     {
-        EnterNewEnemyState(EnemyState.chasing);
-        StopCoroutine(DisplayHitAsync());
-        StartCoroutine(DisplayHitAsync());
+        //EnterNewEnemyState(EnemyState.chasing);
+        //StopCoroutine(DisplayHitAsync());
+        //StartCoroutine(DisplayHitAsync());
     }
 
     public void BoomerAwnserGood()

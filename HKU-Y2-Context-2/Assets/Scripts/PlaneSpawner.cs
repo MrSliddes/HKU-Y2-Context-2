@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlaneSpawner : MonoBehaviour
+public class PlaneSpawner : MonoBehaviour, IDamageable
 {
     public bool shootRight = false;
     public float fireRate = 4;
@@ -15,6 +15,8 @@ public class PlaneSpawner : MonoBehaviour
     public Transform bulletPosRight;
 
     private float fireRateTimer;
+
+    
 
     // Start is called before the first frame update
     void Start()
@@ -46,4 +48,9 @@ public class PlaneSpawner : MonoBehaviour
             a.GetComponent<Enemy_Plane>().moveRight = shootRight;
         }
     }
+    public void ReceiveDamage(float amount)
+    {
+        Destroy(gameObject);
+    }
+
 }
