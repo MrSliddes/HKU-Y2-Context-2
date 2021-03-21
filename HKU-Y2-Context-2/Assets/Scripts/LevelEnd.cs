@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class LevelEnd : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class LevelEnd : MonoBehaviour
     [Header("Level End Conditions")]
     public bool hasConditions = false;
     public GameObject[] objectsThatNeedToBeDestroyed;
+    public TextMeshProUGUI text;
 
     private bool isLoading;
 
@@ -29,6 +31,19 @@ public class LevelEnd : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if(hasConditions)
+        {
+            foreach(GameObject item in objectsThatNeedToBeDestroyed)
+            {
+                if(item != null) return;
+            }
+
+            // Change text
+            text.text = "<size=60>Doel Gehaald!</size>\nVind de uitgang!";
+        }
+    }
 
     private void OnCollisionEnter(Collision collision)
     {

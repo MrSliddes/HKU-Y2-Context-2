@@ -10,10 +10,13 @@ public class Enemy_GasExploder : Enemy
     public float attackSpeed = 3;
     public LayerMask layerMaskPlayer;
     public ParticleSystem particleSystemExplosion;
+    public Animator animator;
+    public Transform animatorObject;
 
     private Player player;
     private float attackSpeedTimer;
     private bool enterdAttackRange = false;
+    private bool didAttack = false;
 
     public override void Start()
     {
@@ -26,37 +29,86 @@ public class Enemy_GasExploder : Enemy
         particleSystemExplosion.Stop();
     }
 
+    public override void Update()
+    {
+        base.Update();
+
+        // flip
+        if(!spriteRenderer.flipX)
+        {
+            // Left
+            animatorObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+        }
+        else
+        {
+            // Right
+            animatorObject.transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
+        }
+    }
+
     public override void ContactWithPlayer(Collision collision)
     {
         // No contact damage
         //base.ContactWithPlayer(collision);
     }
 
+    public override void EnemyStateIdle()
+    {
+        base.EnemyStateIdle();
+        animator.Play("Gas_Idle");
+    }
+
     public override void EnemyStatePatrolling()
     {
-        base.EnemyStatePatrolling();
+        if(!didAttack && attackSpeedTimer == attackSpeed) base.EnemyStatePatrolling();
+
+        if(attackSpeedTimer > 0) animator.Play("Gas_Walk");
 
         if(Vector3.Distance(transform.position, player.transform.position) < aggroRange)
         {
             if(!enterdAttackRange)
             {
                 enterdAttackRange = true;
-                attackSpeedTimer = attackSpeed;
+                attackSpeedTimer = 0;
             }
 
             if(attackSpeedTimer > 0) attackSpeedTimer -= Time.deltaTime;
             else
             {
-                // Attack
-                Collider[] collisions = Physics.OverlapSphere(transform.position, attackRange, layerMaskPlayer);
-                foreach(Collider item in collisions)
+                
+                animator.Play("Gas_attack");
+                // dead dmg halfway
+                if(animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f && animator.GetCurrentAnimatorStateInfo(0).IsName("Gas_attack"))
                 {
-                    item.GetComponent<Player>().ReceiveDamage(damage, transform);
-                }
-                StartCoroutine(ExplosionAsync());
+                    if(!didAttack)
+                    {
+                        didAttack = true;
 
-                attackSpeedTimer = attackSpeed;
+                        // Attack
+                        Collider[] collisions = Physics.OverlapSphere(transform.position, attackRange, layerMaskPlayer);
+                        foreach(Collider item in collisions)
+                        {
+                            item.GetComponent<Player>().ReceiveDamage(damage, transform);
+                        }
+                        StartCoroutine(ExplosionAsync());
+                    }
+                }
+
+                if(animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1 && animator.GetCurrentAnimatorStateInfo(0).IsName("Gas_attack"))
+                {
+                    attackSpeedTimer = attackSpeed;
+                    enterdAttackRange = false;
+                    didAttack = false;
+                    animator.Play("Gas_Walk");
+                }
+
             }
+        }
+        else
+        {
+            attackSpeedTimer = attackSpeed;
+            enterdAttackRange = false;
+            didAttack = false;
         }
     }
 
