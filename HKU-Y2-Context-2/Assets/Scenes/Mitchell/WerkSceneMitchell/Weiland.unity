@@ -241,8 +241,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -282, y: -121}
-  m_SizeDelta: {x: 477.3355, y: 154.6217}
+  m_AnchoredPosition: {x: -282, y: -160}
+  m_SizeDelta: {x: 542.6327, y: 232}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3082995
 MonoBehaviour:
@@ -926,8 +926,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: <size=60> Doel:\n</size>Praat met alle boomers.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
+  m_sharedMaterial: {fileID: -6623113337157576029, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1265,8 +1265,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Boomer: "Groene energie is voor hippies! Doe mij maar olie!"'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
+  m_sharedMaterial: {fileID: -6623113337157576029, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3257,8 +3257,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: OK BOOMER
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
+  m_sharedMaterial: {fileID: -6623113337157576029, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3282,7 +3282,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26
+  m_fontSize: 22.5
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3960,7 +3960,7 @@ Transform:
   - {fileID: 1561899936}
   - {fileID: 334804754}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &192086055 stripped
 Transform:
@@ -8500,7 +8500,7 @@ Transform:
   - {fileID: 1015186264}
   - {fileID: 248392403}
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &412150886 stripped
 Transform:
@@ -8772,6 +8772,88 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fad4a819607d6704b8350d023ba11994, type: 3}
+--- !u!1 &428886082
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 428886084}
+  - component: {fileID: 428886083}
+  m_Layer: 0
+  m_Name: 83032467_max
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!212 &428886083
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428886082}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 21300000, guid: 67e57424a0d52694e9ce7aab0df15c58, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 5.94, y: 9.503999}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 0
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
+--- !u!4 &428886084
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428886082}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 82, y: 206.1, z: 515.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 18
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &429925406
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9387,7 +9469,7 @@ Transform:
   - {fileID: 2127606808}
   - {fileID: 124118129}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &447805546
 PrefabInstance:
@@ -10518,8 +10600,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: De wereldtemperatuur is al flink gestegen en ijskappen zijn gesmolten!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
+  m_sharedMaterial: {fileID: -6623113337157576029, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -10543,7 +10625,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 9.35
+  m_fontSize: 7.5
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -10652,8 +10734,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Boomer: "Het is allemaal de schuld van videogames"'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
+  m_sharedMaterial: {fileID: -6623113337157576029, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -11482,8 +11564,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Groene energie is de toekomst, olie is bijna op!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
+  m_sharedMaterial: {fileID: -6623113337157576029, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -11507,7 +11589,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 13.2
+  m_fontSize: 11.25
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -11562,6 +11644,24 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: fad4a819607d6704b8350d023ba11994, type: 3}
   m_PrefabInstance: {fileID: 1269181524}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &551622327 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3587788796799408565, guid: aefc68882537a61458050d9785ab5549, type: 3}
+  m_PrefabInstance: {fileID: 1668563650}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &551622331
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 551622327}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 51588.21, y: 150, z: 21999.59}
+  m_Center: {x: 249.99512, y: -27.590149, z: -10742.568}
 --- !u!4 &554672292 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: fad4a819607d6704b8350d023ba11994, type: 3}
@@ -15694,7 +15794,7 @@ RectTransform:
   m_Children:
   - {fileID: 1472890008}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -17373,7 +17473,7 @@ RectTransform:
   - {fileID: 1596530977}
   - {fileID: 50103368}
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -18106,7 +18206,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &804342049 stripped
 Transform:
@@ -22182,7 +22282,7 @@ Transform:
   - {fileID: 1353063183}
   - {fileID: 124742296}
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &989186902 stripped
 Transform:
@@ -22510,7 +22610,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1307277940126126460, guid: 074b8582670b52541af729b2d5efd5da, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1307277940126126460, guid: 074b8582670b52541af729b2d5efd5da, type: 3}
       propertyPath: m_AnchorMax.x
@@ -27157,7 +27257,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 56.3, y: -25.3, z: 0}
 --- !u!4 &1209607329 stripped
 Transform:
@@ -27355,8 +27455,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Nee het is de schuld van jullie generatie
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
+  m_sharedMaterial: {fileID: -6623113337157576029, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -27380,7 +27480,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 13.2
+  m_fontSize: 11.25
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -29136,6 +29236,67 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: fad4a819607d6704b8350d023ba11994, type: 3}
   m_PrefabInstance: {fileID: 578762948}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1321573617
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.01
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.825
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.71
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.00000058114523
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5521337799142804904, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: dcc96d1821653404d9d409c28c0926c0, type: 2}
+    - target: {fileID: 919132149155446097, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
+      propertyPath: m_Name
+      value: Bord
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 96ca2a7b4dac4f749bd260bbd8e3e13b, type: 3}
 --- !u!1001 &1321716959
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29666,7 +29827,7 @@ Transform:
   - {fileID: 1311736212}
   - {fileID: 1777771932}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1344855873 stripped
 Transform:
@@ -32774,7 +32935,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: f051ee0fd5c01924ca32d550778e7965, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f051ee0fd5c01924ca32d550778e7965, type: 3}
       propertyPath: m_LocalPosition.x
@@ -34296,8 +34457,8 @@ MonoBehaviour:
   m_text: Videogames zorgen niet voor klimaatverandering, onze dagelijkse acties
     wel!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
+  m_sharedMaterial: {fileID: -6623113337157576029, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -34321,7 +34482,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 8.75
+  m_fontSize: 7.5
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -34400,7 +34561,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: d8e2bff258622ad4e8a061f231a6cabe, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d8e2bff258622ad4e8a061f231a6cabe, type: 3}
       propertyPath: m_LocalPosition.x
@@ -35422,7 +35583,7 @@ Transform:
   - {fileID: 1944764791}
   - {fileID: 594286094}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1616839745 stripped
 Transform:
@@ -36593,7 +36754,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: aefc68882537a61458050d9785ab5549, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aefc68882537a61458050d9785ab5549, type: 3}
       propertyPath: m_LocalPosition.x
@@ -38829,7 +38990,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1759812314
 PrefabInstance:
@@ -40011,6 +40172,10 @@ PrefabInstance:
     - target: {fileID: 5957341353902376978, guid: 4033baa87fe981b4197315a24a88fcb6, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5957341353902376978, guid: 4033baa87fe981b4197315a24a88fcb6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5957341353902376981, guid: 4033baa87fe981b4197315a24a88fcb6, type: 3}
       propertyPath: m_RootOrder
@@ -41445,8 +41610,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Boomer: "Klimaatverandering is nep!"'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
+  m_sharedMaterial: {fileID: -6623113337157576029, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -45601,8 +45766,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Jouw tanden zijn ook nep...
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
+  m_sharedMaterial: {fileID: -6623113337157576029, guid: ccb2fa288f6b20849808eb59d13e471d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -45626,7 +45791,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 13.2
+  m_fontSize: 11.25
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -45849,7 +46014,7 @@ Transform:
   - {fileID: 1302370210}
   - {fileID: 1630784774}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2117262458
 PrefabInstance:

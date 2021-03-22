@@ -15,4 +15,10 @@ public class ButtonLoadScene : MonoBehaviour
         LoadingScreen?.SetActive(true);
         SceneManager.LoadSceneAsync(sceneToLoadName, LoadSceneMode.Single);
     }
+
+    public void QuitGame()
+    {
+        Debug.Log("QUIT GAME");
+        Application.Quit();
+    }
 }
