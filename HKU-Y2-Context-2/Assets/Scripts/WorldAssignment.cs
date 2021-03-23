@@ -42,5 +42,6 @@ public class WorldAssignment : MonoBehaviour
         completed = true;
         UI.SetActive(false);
         Debug.Log("Completed");
+        Points.score += 3;
     }
 }

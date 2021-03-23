@@ -152,6 +152,7 @@ public class Enemy_Boomer : Enemy
         Debug.Log("Good");
         transform.position = new Vector3(transform.position.x, transform.position.y, 8);
         boomerUI.SetActive(false);
+        Points.score++;
     }
 
     public void BoomerAwnserBad()
