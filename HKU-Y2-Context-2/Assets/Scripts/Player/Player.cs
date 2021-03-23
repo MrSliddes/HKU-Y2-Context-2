@@ -54,6 +54,7 @@ public class Player : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public Animator animator;
     public Transform animatorObject;
+    public GameObject spritesParent;
 
     [Header("Weapon")]
     public bool hasWeaponStick;
@@ -62,6 +63,11 @@ public class Player : MonoBehaviour
     public Animator weaponStickAnimator;
     public GameObject prefabWeaponStickDamage;
     public GameObject laserModelPivot;
+
+    [Header("Audio")]
+    public AudioClip clipJump;
+    public AudioClip clipHit;
+    public AudioClip clipHurt;
 
     [HideInInspector] public Rigidbody rb;
 
@@ -73,6 +79,7 @@ public class Player : MonoBehaviour
     /// Used for rb movement
     /// </summary>
     private Vector3 inputDirection;
+    private AudioSource audioSource;
 
     private bool addGravityForce;
     private bool canMove;
@@ -81,12 +88,14 @@ public class Player : MonoBehaviour
     private bool isGrounded;
     private bool isInvincible;
     private int currentWeapon = 0;
+    private bool isFlikkerRed;
 
     // Start is called before the first frame update
     void Start()
     {
         // Get
         rb = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
 
         // Set
         laserModelPivot.SetActive(false);
@@ -146,6 +155,7 @@ public class Player : MonoBehaviour
     {
         if(isInvincible || playerState == PlayerState.dead) return; // no damage, invis
         health -= damage;
+        audioSource.PlayOneShot(clipHurt);
 
         if(health <= 0)
         {
@@ -174,13 +184,28 @@ public class Player : MonoBehaviour
     {
         isInvincible = true;
         // Sprite flikker
-        Color f = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 100f / 255f);
-        Color c = spriteRenderer.color;
-        spriteRenderer.color = f;
+        Color f = new Color(1, 1, 1, 100f / 255f);
+        Color c = new Color(1, 1, 1, 1);
         float timeLeft = invincibleTime;
         while(timeLeft > 0)
         {
-            if(spriteRenderer.color == c) spriteRenderer.color = f; else spriteRenderer.color = c;
+            if(!isFlikkerRed)
+            {
+                SpriteRenderer[] items = spritesParent.GetComponentsInChildren<SpriteRenderer>();
+                foreach(SpriteRenderer item in items)
+                {
+                    item.color = f;
+                }
+            }
+            else
+            {
+                SpriteRenderer[] items = spritesParent.GetComponentsInChildren<SpriteRenderer>();
+                foreach(SpriteRenderer item in items)
+                {
+                    item.color = c;
+                }
+            }
+            isFlikkerRed = !isFlikkerRed;
             timeLeft -= 0.15f;
             yield return new WaitForSeconds(0.15f);
         }
@@ -271,6 +296,7 @@ public class Player : MonoBehaviour
                     addGravityForce = false;
                     canMove = true;
                     animator.Play("player_jump");
+                    audioSource.PlayOneShot(clipJump);
                 }
 
                 // Update
@@ -351,6 +377,7 @@ public class Player : MonoBehaviour
                     weaponStickAnimator.Play("Anim_Player_Weapon_Stick_Swing");
                     Instantiate(prefabWeaponStickDamage, weaponPivot.transform.position, weaponPivot.transform.rotation);
                     animator.Play("player_hit");
+                    audioSource.PlayOneShot(clipHit);
                     break;
                 case 1:
                     // Laser

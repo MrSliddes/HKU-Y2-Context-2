@@ -4972,7 +4972,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a90cdb7db1c58d40b5bb07245cff363, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 3
+  health: 2
   damage: 1
   movementSpeed: 1
   idleTime: 1
@@ -4981,8 +4981,8 @@ MonoBehaviour:
   patrolPointB: {x: 4, y: 0, z: 0}
   enemyState: 0
   spriteRenderer: {fileID: 4865705042291102246}
-  aggroRange: 4
-  attackRange: 3.68
+  aggroRange: 3.85
+  attackRange: 2.96
   attackSpeed: 3
   layerMaskPlayer:
     serializedVersion: 2

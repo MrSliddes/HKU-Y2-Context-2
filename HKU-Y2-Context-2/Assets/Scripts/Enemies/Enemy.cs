@@ -249,10 +249,17 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         // Sprite flikker
         Color f = Color.red;
-        Color c = spriteRenderer.color;
-        spriteRenderer.color = f;
+        Color c = Color.white;
+        SpriteRenderer[] items = GetComponentsInChildren<SpriteRenderer>();
+        foreach(SpriteRenderer item in items)
+        {
+            item.color = f;
+        }
         yield return new WaitForSeconds(0.15f);
-        spriteRenderer.color = c;
+        foreach(SpriteRenderer item in items)
+        {
+            item.color = c;
+        }
         yield break;
     }
 

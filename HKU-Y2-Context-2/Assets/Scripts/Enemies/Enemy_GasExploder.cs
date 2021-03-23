@@ -17,6 +17,7 @@ public class Enemy_GasExploder : Enemy
     private float attackSpeedTimer;
     private bool enterdAttackRange = false;
     private bool didAttack = false;
+    private bool finishedAttack = true;
 
     public override void Start()
     {
@@ -64,12 +65,13 @@ public class Enemy_GasExploder : Enemy
 
         if(attackSpeedTimer > 0) animator.Play("Gas_Walk");
 
-        if(Vector3.Distance(transform.position, player.transform.position) < aggroRange)
+        if(Vector3.Distance(transform.position, player.transform.position) < aggroRange || !finishedAttack)
         {
             if(!enterdAttackRange)
             {
                 enterdAttackRange = true;
                 attackSpeedTimer = 0;
+                finishedAttack = false;
             }
 
             if(attackSpeedTimer > 0) attackSpeedTimer -= Time.deltaTime;
@@ -99,6 +101,7 @@ public class Enemy_GasExploder : Enemy
                     attackSpeedTimer = attackSpeed;
                     enterdAttackRange = false;
                     didAttack = false;
+                    finishedAttack = true;
                     animator.Play("Gas_Walk");
                 }
 
